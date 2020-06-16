@@ -1,0 +1,104 @@
+<!-- breadcrum -->
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" aria-current="page"><a [routerLink]="['/dashboard']">Inicio</a></li>
+    <li class="breadcrumb-item" aria-current="page"><a [routerLink]="['/cliente']"
+        (click)="mostrarFormulario(false, 'Listado')">Timbrados</a></li>
+    <li class="breadcrumb-item active" aria-current="page" *ngIf="accion != ''">{{ accion }}</li>
+  </ol>
+</nav>
+
+<div class="mt-4"></div>
+
+<div class="container">
+  <!-- paginacion y boton para agregar  -->
+  <div *ngIf="!form" class="row justify-content-end">
+    <button class="btn btn-primary" (click)="mostrarFormulario(true, 'Registrar')"><i class="fas fa-plus"></i>
+      Agregar</button>
+  </div>
+
+  <div class="mt-2"></div>
+
+  <!-- tabla de listado -->
+  <div *ngIf="!form" class="row">
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Numero</th>
+          <th scope="col">Fecha Desde</th>
+          <th scope="col">Fecha Hasta</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let fila of listaTimbrado | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
+          <td>{{ fila.numero }}</td>
+          <td>{{ fila.fecha_desde }}</td>
+          <td>{{ fila.fecha_hasta }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" (click)="getTimbrado(fila.id)"> <i class="fas fa-edit"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- paginacion -->
+  <div *ngIf="!form" class="row justify-content-center">
+    <app-paginacion (actualizarPagina)="paginacion($event)" [datos]="listaTimbrado" [porPagina]="porPagina"
+      [total]="total"></app-paginacion>
+  </div>
+
+  <!-- formulario -->
+  <form *ngIf="form" class="form-group" novalidate>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Numero" name="numero" [(ngModel)]="timbrado.numero" autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker1" placeholder="Fecha Desde" [(ngModel)]="timbrado.fecha_desde"
+            name="fecha_desde" autocomplete="off">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker2" placeholder="Fecha Hasta" [(ngModel)]="timbrado.fecha_hasta"
+            name="fecha_hasta" autocomplete="off">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row justify-content-end">
+      <button type="button" class="btn btn-danger" (click)="mostrarFormulario(false, 'Listado')"><i
+          class="fas fa-times"></i> Cancelar</button> &nbsp;
+      <button type="submit" class="btn btn-success">
+        <div *ngIf="accion == 'Registrar'" (click)="registrar()">
+          <i class="fas fa-save"></i> Guardar
+        </div>
+        <div *ngIf="accion == 'Actualizar'" (click)="actualizar()">
+          <i class="fas fa-save"></i> Actualizar
+        </div>
+      </button>
+    </div>
+
+  </form>
+
+
+</div>

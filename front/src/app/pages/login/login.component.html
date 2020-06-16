@@ -1,0 +1,28 @@
+<br><br>
+<form [formGroup]="frmLogin" (ngSubmit)="login()" class="form-signin text-center" novalidate>
+
+  <img class="mb-4" src="assets/images/login-avatar.png" alt="" width="100" height="100">
+  
+  <div class="form-group">
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Email" name="email" formControlName="email" autocomplete="off">
+    </mat-form-field>
+    <p class="invalid-feedback d-block" *ngIf="frmLogin.get('email').hasError('required') && goFrmLogin">Este campo es obligatorio</p>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="example-full-width">
+      <input type="password" matInput placeholder="Clave de acceso" name="clave_acceso" formControlName="clave_acceso" autocomplete="off">
+    </mat-form-field>
+    <p class="invalid-feedback d-block" *ngIf="frmLogin.get('clave_acceso').hasError('required') && goFrmLogin">Este campo es obligatorio</p>
+  </div>
+  
+  <input type="submit" class="btn btn-lg btn-primary btn-block" value="Acceder">
+  <br>
+
+  <div class="alert alert-danger" role="alert" *ngIf="!acceso">
+    Acceso Denegado
+  </div>
+
+</form>
+
