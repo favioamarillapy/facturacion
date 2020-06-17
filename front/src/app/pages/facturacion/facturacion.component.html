@@ -55,93 +55,70 @@
   <div *ngIf="formulario">
 
     <!-- cabecera de factura -->
-    <form *ngIf="formulario" [formGroup]="frmRegFactura" class="form-group" novalidate>
+    <form *ngIf="page == 'cabecera'" class="form-group" novalidate>
 
-      <h3 *ngIf="page == 'cabecera'">Datos de Factura</h3>
-      <div class="row" *ngIf="page == 'cabecera'">
+      <h3>Datos de Factura</h3>
+      <div class="row">
 
         <div class="form-group col-md-6" [hidden]="true">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Timbrado" name="id_timbrado" formControlName="id_timbrado" [disabled]="true">
+            <input matInput placeholder="Timbrado" name="id_timbrado" [(ngModel)]="factura.id_timbrado">
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('id_timbrado').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
 
         <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Timbrado" name="timbrado" formControlName="timbrado" [disabled]="true">
+            <input matInput placeholder="Timbrado" name="timbrado" [(ngModel)]="factura.timbrado">
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('timbrado').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
 
         <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Numero" name="numero" formControlName="numero" [disabled]="true">
+            <input matInput placeholder="Numero" name="numero" [(ngModel)]="factura.numero">
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('numero').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
 
         <div class="form-group col-md-4">
           <mat-form-field>
             <input matInput [matDatepicker]="picker1" placeholder="Fecha de Emision" name="fecha_emision"
-              formControlName="fecha_emision" (dateChange)="cambiarFormatoFecha($event)">
+              [(ngModel)]="factura.fecha_emision" (dateChange)="cambiarFormatoFecha($event)">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('fecha_emision').hasError('required') && goFrmRegFactura">Este campo es obligatorio
-          </p>
         </div>
 
         <div class="form-group col-md-4">
           <mat-form-field class="example-full-width">
-            <select matNativeControl placeholder="Condicion" name="tipo" formControlName="tipo">
+            <select matNativeControl placeholder="Condicion" name="tipo" [(ngModel)]="factura.tipo">
               <option value="CO">Contado</option>
               <option value="CR">Credito</option>
             </select>
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('fecha_emision').hasError('required') && goFrmRegFactura">Este campo es obligatorio
-          </p>
         </div>
 
-        <input type="hidden" formControlName="id_cliente">
+        <input type="hidden" name="id" [(ngModel)]="factura.id">
         <div class="form-group col-md-4">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="R.U.C" name="ruc" formControlName="ruc" #ruc
+            <input matInput placeholder="R.U.C" name="ruc" [(ngModel)]="factura.ruc" #ruc
               (keyup.enter)="getCliente(ruc.value)">
           </mat-form-field>
-          <p class="invalid-feedback d-block" *ngIf="frmRegFactura.get('ruc').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
 
         <div class="form-group col-md-8">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Razon Social" name="razon_social" formControlName="razon_social">
+            <input matInput placeholder="Razon Social" name="razon_social" [(ngModel)]="factura.razon_social">
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('razon_social').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
 
         <div class="form-group col-md-12">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Direccion" name="direccion" formControlName="direccion">
+            <input matInput placeholder="Direccion" name="direccion" [(ngModel)]="factura.direccion">
           </mat-form-field>
-          <p class="invalid-feedback d-block"
-            *ngIf="frmRegFactura.get('direccion').hasError('required') && goFrmRegFactura">
-            Este campo es obligatorio</p>
         </div>
-        <input type="hidden" formControlName="total">
-        <input type="hidden" formControlName="exento">
-        <input type="hidden" formControlName="iva_5">
-        <input type="hidden" formControlName="iva_10">
+        <input type="hidden" name="total" [(ngModel)]="factura.total">
+        <input type="hidden" name="exento" [(ngModel)]="factura.exento">
+        <input type="hidden" name="iva_5" [(ngModel)]="factura.iva_5">
+        <input type="hidden" name="iva_10" [(ngModel)]="factura.iva_10">
 
       </div>
 
@@ -228,19 +205,6 @@
               </button>
             </td>
           </tr>
-          <tr *ngIf="accion == 'Ver Factura'">
-            <td>1</td>
-            <td>Servicio Prestado</td>
-            <td>150.000</td>
-            <td>0</td>
-            <td>0</td>
-            <td>150.000</td>
-            <td *ngIf="accion != 'Ver Factura'">
-              <button type="button" class="btn btn-danger btn-sm">
-                <i class="fas fa-times"></i>
-              </button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -299,19 +263,6 @@
         <td>{{ item.iva_10 }}</td>
         <td>
           <button type="button" class="btn btn-danger btn-sm" (click)="eliminarServicio(i)">
-            <i class="fas fa-times"></i>
-          </button>
-        </td>
-      </tr>
-      <tr *ngIf="accion == 'Ver Factura'">
-        <td>1</td>
-        <td>Servicio Prestado</td>
-        <td>150.000</td>
-        <td>0</td>
-        <td>0</td>
-        <td>150.000</td>
-        <td>
-          <button type="button" class="btn btn-danger btn-sm">
             <i class="fas fa-times"></i>
           </button>
         </td>

@@ -78,4 +78,21 @@ export class TimbradoService {
       );
     });
   }
+
+  public async updateUltUsado(data, id) {
+    const url = `${API}/ultimoUsado/${id}`;
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return new Promise(resolve => {
+      this.http.put(url, data, { headers: headers }).subscribe(
+        (response: any) => {
+          resolve(response);
+        },
+        error => {
+          resolve(error.error);
+        }
+      );
+    });
+  }
+
 }

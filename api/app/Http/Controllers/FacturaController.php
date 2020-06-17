@@ -217,11 +217,7 @@ class FacturaController extends BaseController
         $query = FacturaDetalle::orderBy('created_at', 'asc');
 
         $query->where('id_factura', '=', $id);
-        
-        $paginar = $request->query('paginar');
-        $listar = (boolval($paginar)) ? 'paginate' : 'get';
-
-        $data = $query->$listar();
+        $data = $query->get();
         
         return $this->sendResponse(true, 'Listado obtenido exitosamente', $data, 200);
     }

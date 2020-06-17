@@ -29,6 +29,7 @@ Route::resource('cliente', 'ClienteController');
 
 Route::resource('timbrado', 'TimbradoController');
 Route::get('timbradoActivo', 'TimbradoController@getTimbradoActivo');
+Route::put('ultimoUsado/{id}', 'TimbradoController@updateUltUsado');
 
 Route::resource('factura', 'FacturaController');
 Route::get('factura/detalle/{id}', 'FacturaController@detalle');

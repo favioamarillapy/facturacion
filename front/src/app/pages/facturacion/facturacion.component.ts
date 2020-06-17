@@ -7,6 +7,7 @@ import { FacturaService } from 'src/app/services/factura.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { TimbradoService } from 'src/app/services/timbrado.service';
 import { Timbrado } from 'src/app/models/timbrado';
+import { Factura } from 'src/app/models/factura';
 
 @Component({
   selector: 'app-facturacion',
@@ -30,7 +31,6 @@ export class FacturacionComponent implements OnInit {
 
   goFrmServicio: boolean;
   goFrmRegFactura: boolean;
-  frmRegFactura: FormGroup
 
   paginaActual = 1;
   porPagina = 5;
@@ -38,13 +38,14 @@ export class FacturacionComponent implements OnInit {
 
   tipoFactura = 'CO';
   timbrado: Timbrado
+  factura: Factura
 
   constructor(
-    private formBuilder: FormBuilder,
     private facturaService: FacturaService,
     private clienteService: ClienteService,
     private timbradoService: TimbradoService
   ) {
+    this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.goFrmRegFactura = false;
     this.goFrmServicio = false;
   }
@@ -75,19 +76,23 @@ export class FacturacionComponent implements OnInit {
     };
   }
 
-
   async mostrarFormulario(flag, accion) {
     this.formulario = flag;
     this.accion = accion;
 
     if (flag && accion == 'Registrar') {
+      this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+      this.page = 'cabecera';
+      this.listaServicios = [];
+
       await this.getTimbradoActivo();
-      this.crearFormulario();
+      this.inicilizarDetalleFactura();
+      this.inicilizarDetalleTotal();
     }
     this.goFrmRegFactura = false;
   }
 
-  async getTimbradoActivo(pagina?, parametrosFiltro?) {
+  async getTimbradoActivo(pagina?) {
     this.paginaActual = (pagina) ? pagina : this.paginaActual;
     this.listaFactura = null;
     this.accion = 'Listado';
@@ -99,11 +104,25 @@ export class FacturacionComponent implements OnInit {
     if (response.success) {
       if (response.data) {
         this.timbrado = response.data;
+        this.factura.id_timbrado = this.timbrado.id;
+        this.factura.timbrado = this.timbrado.numero;
+        console.log(this.timbrado);
+        (this.timbrado.ult_usado) ? this.factura.numero = this.setearNroFactura(this.timbrado.ult_usado + 1) : this.factura.numero = this.setearNroFactura(1);
       }
     } else {
 
     }
+  }
 
+  async getTimbradoById(id) {
+    const response: any = await this.timbradoService.get(id, null);
+
+    if (response.success) {
+      this.factura.id_timbrado = response.data[0].id;
+      this.factura.timbrado = response.data[0].numero;
+    } else {
+      this.mensajeError = 'Error al obtener cliente'
+    }
   }
 
   async paginacion(pagina?, parametrosFiltro?) {
@@ -123,63 +142,27 @@ export class FacturacionComponent implements OnInit {
     } else {
 
     }
-
-  }
-
-  crearFormulario(factura: any = {}) {
-    if (!this.timbrado.ult_usado) {
-      this.timbrado.ult_usado = "1";
-    }else{
-      this.timbrado.ult_usado = this.timbrado.ult_usado + 1;
-    }
-
-    factura.numero = this.setearNroFactura(this.timbrado.ult_usado);
-    console.log(this.setearNroFactura(this.timbrado.ult_usado));
-    console.log(factura);
-    
-    this.frmRegFactura = this.formBuilder.group({
-      id: [factura.id],
-      timbrado: [this.timbrado.numero, [Validators.required]],
-      id_timbrado: [this.timbrado.id, [Validators.required]],
-      fecha_emision: [factura.fecha_emision, [Validators.required]],
-      numero: [factura.numero, [Validators.required]],
-      tipo: [factura.tipo, [Validators.required]],
-      id_cliente: [factura.id_cliente, [Validators.required]],
-      ruc: [factura.ruc, [Validators.required]],
-      razon_social: [factura.razon_social, [Validators.required]],
-      direccion: [factura.direccion, [Validators.required]],
-      total: [factura.total, [Validators.required]],
-      exento: [factura.exento, [Validators.required]],
-      iva_5: [factura.iva_5, [Validators.required]],
-      iva_10: [factura.iva_10, [Validators.required]]
-    });
-
-    this.frmRegFactura.controls['timbrado'].disable();
-    this.frmRegFactura.controls['numero'].disable();
-
-    this.page = 'cabecera';
-    this.listaServicios = [];
-
-    this.inicilizarDetalleFactura();
-    this.inicilizarDetalleTotal();
   }
 
   async submit() {
     this.goFrmRegFactura = true;
 
-    this.frmRegFactura.controls['fecha_emision'].setValue(moment(this.frmRegFactura.value.fecha_emision).format('YYYY-MM-DD'));
-    let factura: any = this.frmRegFactura.value;
-    factura.detalles = this.listaServicios;
+    this.factura.fecha_emision = moment(this.factura.fecha_emision).format('YYYY-MM-DD');
+    this.factura.detalles = this.listaServicios;
 
-
-    const response: any = await this.facturaService.registrar(factura);
+    const response: any = await this.facturaService.registrar(this.factura);
 
     if (response.success) {
+      const dataUlt = {
+        ult_usado: this.factura.numero
+      };
+
+      const responseUltUsado: any = await this.timbradoService.updateUltUsado(dataUlt, this.factura.id_timbrado);
+
       this.paginacion();
       this.generarPdf();
 
       this.goFrmRegFactura = false;
-      this.frmRegFactura.reset();
       this.mostrarFormulario(false, "Listado");
     } else {
 
@@ -191,6 +174,23 @@ export class FacturacionComponent implements OnInit {
     const response: any = await this.facturaService.get(id_factura);
 
     if (response.success) {
+      this.factura = response.data;
+      await this.getTimbradoById(this.factura.id_timbrado);
+      await this.getClienteById(this.factura.id_cliente);
+      await this.getDetalleFactura(id_factura);
+      this.mostrarFormulario(true, 'Ver Factura');
+    } else {
+
+    }
+  }
+
+  async getDetalleFactura(id_factura) {
+    const response: any = await this.facturaService.getDetalle(id_factura);
+
+    if (response.success) {
+      this.listaServicios = [];
+      this.listaServicios = response.data;
+      this.factura.detalles = response.data;
       this.mostrarFormulario(true, 'Ver Factura');
     } else {
 
@@ -199,7 +199,7 @@ export class FacturacionComponent implements OnInit {
 
   cambiarFormatoFecha(event: any) {
     if (this.accion == 'Registrar') {
-      this.frmRegFactura.value.fechaNacimiento = moment(event.value).format('DD/MM/YYYY');
+      this.factura.fecha_emision = moment(this.factura.fecha_emision).format('DD/MM/YYYY');
     }
   }
 
@@ -218,31 +218,32 @@ export class FacturacionComponent implements OnInit {
     this.detalleTotal.total += this.detalleFactura.precio_unitario * this.detalleFactura.cantidad;
 
     if (this.detalleFactura.impuesto == 0) {
-      this.detalleTotal.iva_5 += this.detalleFactura.precio_unitario;
+      this.detalleTotal.exento += this.detalleFactura.precio_unitario;
       this.detalleFactura.exento = this.detalleFactura.precio_unitario;
       this.detalleFactura.iva_5 = 0;
       this.detalleFactura.iva_10 = 0;
     }
     if (this.detalleFactura.impuesto == 5) {
-      this.detalleFactura.exento = 0;
       this.detalleTotal.iva_5 += this.detalleFactura.precio_unitario;
+      this.detalleFactura.exento = 0;
       this.detalleFactura.iva_5 = this.detalleFactura.precio_unitario;
       this.detalleFactura.iva_10 = 0;
     }
     if (this.detalleFactura.impuesto == 10) {
+      this.detalleTotal.iva_10 += this.detalleFactura.precio_unitario;
       this.detalleFactura.exento = 0;
       this.detalleFactura.iva_5 = 0;
-      this.detalleTotal.iva_10 += this.detalleFactura.precio_unitario;
       this.detalleFactura.iva_10 = this.detalleFactura.precio_unitario;
     }
 
     this.listaServicios.push(this.detalleFactura);
 
     //cargamos los totales por cada servicio insertado
-    this.frmRegFactura.controls['total'].setValue(this.detalleTotal.total);
-    this.frmRegFactura.controls['exento'].setValue(this.detalleTotal.iva_5);
-    this.frmRegFactura.controls['iva_5'].setValue(this.detalleTotal.iva_5);
-    this.frmRegFactura.controls['iva_10'].setValue(this.detalleTotal.iva_10);
+    this.factura.total = this.detalleTotal.total;
+    this.factura.exento = this.detalleTotal.exento;
+    this.factura.iva_5 = this.detalleTotal.iva_5;
+    this.factura.iva_10 = this.detalleTotal.iva_10;
+
 
     this.inicilizarDetalleFactura();
 
@@ -255,7 +256,7 @@ export class FacturacionComponent implements OnInit {
     this.detalleTotal.total -= this.listaServicios[0].precio_unitario * this.listaServicios[0].cantidad;
 
     if (this.listaServicios[0].impuesto == 0) {
-      this.detalleTotal.iva_5 -= this.listaServicios[0].precio_unitario;
+      this.detalleTotal.exento -= this.listaServicios[0].precio_unitario;
     }
     if (this.listaServicios[0].impuesto == 5) {
       this.detalleTotal.iva_5 -= this.listaServicios[0].precio_unitario;
@@ -265,10 +266,10 @@ export class FacturacionComponent implements OnInit {
     }
 
     //cargamos los totales por cada servicio insertado
-    this.frmRegFactura.controls['total'].setValue(this.detalleTotal.total);
-    this.frmRegFactura.controls['exento'].setValue(this.detalleTotal.iva_5);
-    this.frmRegFactura.controls['iva_5'].setValue(this.detalleTotal.iva_5);
-    this.frmRegFactura.controls['iva_10'].setValue(this.detalleTotal.iva_10);
+    this.factura.total = this.detalleTotal.total;
+    this.factura.exento = this.detalleTotal.exento;
+    this.factura.iva_5 = this.detalleTotal.iva_5;
+    this.factura.iva_10 = this.detalleTotal.iva_10;
 
     //se elimina el item
     this.listaServicios.splice(index, 1);
@@ -285,7 +286,7 @@ export class FacturacionComponent implements OnInit {
     });
   }
 
-  async getCliente(rucBusqueda) {
+  async getCliente(rucBusqueda?) {
     let parametros = {
       ruc: rucBusqueda
     }
@@ -293,12 +294,12 @@ export class FacturacionComponent implements OnInit {
     const response: any = await this.clienteService.get(null, parametros);
 
     if (response.success) {
-      if (response.data[0].razon_social) {
-        this.frmRegFactura.controls['id_cliente'].setValue(response.data[0].id);
-        this.frmRegFactura.controls['razon_social'].setValue(response.data[0].razon_social);
-        this.frmRegFactura.controls['direccion'].setValue(response.data[0].direccion);
+      if (response.data[0]) {
+        this.factura.id_cliente = response.data[0].id;
+        this.factura.ruc = response.data[0].ruc;
+        this.factura.razon_social = response.data[0].razon_social;
+        this.factura.direccion = response.data[0].direccion;
       } else {
-
         this.mensajeError = 'No se encuentra el cliente'
       }
     } else {
@@ -306,10 +307,20 @@ export class FacturacionComponent implements OnInit {
     }
   }
 
+  async getClienteById(id) {
+    const response: any = await this.clienteService.get(id, null);
+
+    if (response.success) {
+      this.getCliente(response.data.ruc);
+    } else {
+      this.mensajeError = 'Error al obtener cliente'
+    }
+  }
+
   moverPage(pageValue) {
     if (pageValue == 'detalle') {
-      if (!this.frmRegFactura.value.numero || !this.frmRegFactura.value.fecha_emision
-        || !this.frmRegFactura.value.ruc || !this.frmRegFactura.value.razon_social || !this.frmRegFactura.value.direccion) {
+      if (!this.factura.numero || !this.factura.fecha_emision
+        || !this.factura.ruc || !this.factura.razon_social || !this.factura.direccion) {
         this.goFrmRegFactura = true;
         this.mensajeError = 'Debe completar todos los campos'
         return;
@@ -318,16 +329,17 @@ export class FacturacionComponent implements OnInit {
     this.page = pageValue;
   }
 
-  setearNroFactura(numero){
-    let longitud: number = numero.length;
+  setearNroFactura(numero: number) {
+    let str = numero.toString();
+    let longitud: number = str.length;
     let ceros: string = "";
-    console.log(longitud);
-    // for (let index = 1; longitud <= 7; index++) {
-    //   ceros += "0";
-    //   console.log(ceros);
-    // }
 
-    return ceros + numero;
+    for (let index = 1; longitud <= 7; index++) {
+      ceros += "0";
+      console.log(index);
+    }
+
+    return parseInt(ceros + str);
   }
 
 }

@@ -43,7 +43,7 @@ export class TimbradoComponent implements OnInit {
     this.accion = accion;
 
     if (flag && accion == 'Registrar') {
-      this.timbrado = new Timbrado(null, null, null, null);
+      this.timbrado = new Timbrado(null, null, null, null, null);
     }
   }
 

@@ -174,4 +174,30 @@ class TimbradoController extends BaseController
         return $this->sendResponse(true, 'Listado obtenido exitosamente', $data, 200);
     }
 
+    public function updateUltUsado(Request $request, $id)
+    {
+        $ult_usado = $request->input("ult_usado");
+
+        $validator = Validator::make($request->all(), [
+            'ult_usado'  => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendResponse(false, 'Error de validacion', $validator->errors(), 400);
+        }
+
+        $timbrado = Timbrado::find($id);
+        if ($timbrado) {
+            $timbrado->ult_usado = $ult_usado;
+            
+            if ($timbrado->save()) {
+                return $this->sendResponse(true, 'Timbrado actualizado', $timbrado, 200);
+            }
+            
+            return $this->sendResponse(false, 'Timbrado no actualizado', null, 400);
+        }
+        
+        return $this->sendResponse(false, 'No se encontro la Timbrado', null, 404);
+    }
+
 }

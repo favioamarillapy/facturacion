@@ -4,6 +4,6 @@ export class Timbrado {
         public numero: string,
         public fecha_desde: string,
         public fecha_hasta: string,
-        public ult_usado: string
+        public ult_usado: number
     ) { }
 }
