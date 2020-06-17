@@ -8,7 +8,7 @@ class Factura extends Model
 {
     protected $primaryKey = 'id';
     protected $table = 'facturas';
-    protected $perPage = 10;
+    protected $perPage = 5;
 
     protected $fillable =[
         'identificador', 'id_cliente', 'fecha_emision', 'numero', 'tipo', 'total', 'exento', 'iva_5', 'iva_10'

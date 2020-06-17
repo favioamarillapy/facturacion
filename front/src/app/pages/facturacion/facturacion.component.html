@@ -53,6 +53,12 @@
   </div>
 
   <div *ngIf="formulario">
+    <!-- mensaje de operacion -->
+    <div class="alert" role="alert" *ngIf="mensajeOperacion != ''"
+      [ngClass]="{'alert-success': mensajeOperacion == 'success', 'alert-danger': mensajeOperacion == 'error'}">
+      <div *ngIf="mensajeOperacion == 'success'">Factura generada correctamente</div>
+      <div *ngIf="mensajeOperacion == 'error'">Error al generar factura</div>
+    </div>
 
     <!-- cabecera de factura -->
     <form *ngIf="page == 'cabecera'" class="form-group" novalidate>
@@ -240,33 +246,37 @@
 
 </div>
 
-<div id="pdf" style="display: none;">
-  <table class="table table-striped col-md-12">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">Cantidad</th>
-        <th scope="col">Descripcion</th>
-        <th scope="col">Precio Unitario</th>
-        <th scope="col">Exentas</th>
-        <th scope="col">IVA 5%</th>
-        <th scope="col">IVA 10%</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of listaServicios; let i = index">
-        <td>{{ item.cantidad }}</td>
-        <td>{{ item.descripcion }}</td>
-        <td>{{ item.precio_unitario }}</td>
-        <td>{{ item.exento }}</td>
-        <td>{{ item.iva_5 }}</td>
-        <td>{{ item.iva_10 }}</td>
-        <td>
-          <button type="button" class="btn btn-danger btn-sm" (click)="eliminarServicio(i)">
-            <i class="fas fa-times"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+
+
+<div class="container">
+
+  <div class="row">
+    <button type="button" class="btn btn-default border" (click)="generarPdf()">
+      <i class="fas fa-print"></i> Impresion
+    </button> &nbsp;
+  </div>
+
+
+  <div id="pdf" #pdf>
+    <!-- numero de factura -->
+    <div class="row">
+      <div class="col">
+        <span class="float-right">0000001</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- datos del cliente -->
+      <div class="col-md-6">
+        <div class="row">
+          <p>01/01/2020</p>
+        </div>
+      </div>
+      <!-- condicion de venta -->
+      <div class="col-md-6">
+
+      </div>
+    </div>
+  </div>
+
 </div>

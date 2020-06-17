@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as moment from "moment";
-import * as jspdf from 'jspdf';
-import html2canvas from 'html2canvas';
 import { FacturaService } from 'src/app/services/factura.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { TimbradoService } from 'src/app/services/timbrado.service';
 import { Timbrado } from 'src/app/models/timbrado';
 import { Factura } from 'src/app/models/factura';
+import * as jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-facturacion',
@@ -16,6 +15,7 @@ import { Factura } from 'src/app/models/factura';
 })
 export class FacturacionComponent implements OnInit {
 
+  public mensajeOperacion = '';
   public page = 'cabecera';
   public mensajeError = '';
 
@@ -39,6 +39,8 @@ export class FacturacionComponent implements OnInit {
   tipoFactura = 'CO';
   timbrado: Timbrado
   factura: Factura
+
+  @ViewChild('pdf') pdf: ElementRef;
 
   constructor(
     private facturaService: FacturaService,
@@ -77,8 +79,14 @@ export class FacturacionComponent implements OnInit {
   }
 
   async mostrarFormulario(flag, accion) {
+    this.mensajeOperacion = '';
     this.formulario = flag;
     this.accion = accion;
+
+    if (accion == 'Listado') {
+      this.paginacion();
+    }
+
 
     if (flag && accion == 'Registrar') {
       this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -106,8 +114,11 @@ export class FacturacionComponent implements OnInit {
         this.timbrado = response.data;
         this.factura.id_timbrado = this.timbrado.id;
         this.factura.timbrado = this.timbrado.numero;
-        console.log(this.timbrado);
-        (this.timbrado.ult_usado) ? this.factura.numero = this.setearNroFactura(this.timbrado.ult_usado + 1) : this.factura.numero = this.setearNroFactura(1);
+
+        let numero: number;
+        (this.timbrado.ult_usado) ? numero = this.timbrado.ult_usado + 1 : numero = 1;
+        this.factura.numero = '001-001-' + this.setearNroFactura(numero.toString());
+
       }
     } else {
 
@@ -153,17 +164,31 @@ export class FacturacionComponent implements OnInit {
     const response: any = await this.facturaService.registrar(this.factura);
 
     if (response.success) {
+
+      let number = this.timbrado.ult_usado + 1;
+      let ult_usado: string = number.toString();
       const dataUlt = {
-        ult_usado: this.factura.numero
+        ult_usado: parseInt(ult_usado)
       };
 
       const responseUltUsado: any = await this.timbradoService.updateUltUsado(dataUlt, this.factura.id_timbrado);
+      if (responseUltUsado.success) {
+        this.mensajeOperacion = 'success';
+      } else {
 
-      this.paginacion();
-      this.generarPdf();
+        this.mensajeOperacion = 'error';
+      }
+
+      setTimeout(() => {
+        this.generarPdf();
+      }, 1500);
 
       this.goFrmRegFactura = false;
-      this.mostrarFormulario(false, "Listado");
+
+      setTimeout(() => {
+        this.mostrarFormulario(false, "Listado");
+      }, 2000);
+
     } else {
 
     }
@@ -175,9 +200,11 @@ export class FacturacionComponent implements OnInit {
 
     if (response.success) {
       this.factura = response.data;
+
       await this.getTimbradoById(this.factura.id_timbrado);
       await this.getClienteById(this.factura.id_cliente);
       await this.getDetalleFactura(id_factura);
+      this.page = 'cabecera';
       this.mostrarFormulario(true, 'Ver Factura');
     } else {
 
@@ -276,16 +303,6 @@ export class FacturacionComponent implements OnInit {
 
   }
 
-  generarPdf() {
-    let data = document.getElementById('pdf');
-    html2canvas(data).then(canvas => {
-      let pdf = new jspdf('l', 'cm', 'a4'); //Generates PDF in landscape mode
-      // let pdf = new jspdf('p', 'cm', 'a4'); Generates PDF in portrait mode
-      // pdf.save('Filename.pdf');
-      pdf.output('dataurlnewwindow');
-    });
-  }
-
   async getCliente(rucBusqueda?) {
     let parametros = {
       ruc: rucBusqueda
@@ -329,17 +346,45 @@ export class FacturacionComponent implements OnInit {
     this.page = pageValue;
   }
 
-  setearNroFactura(numero: number) {
-    let str = numero.toString();
-    let longitud: number = str.length;
+  setearNroFactura(numero: string) {
+    let longitud: number = numero.length;
     let ceros: string = "";
 
-    for (let index = 1; longitud <= 7; index++) {
+    for (let index = 0; index < 7; index++) {
       ceros += "0";
-      console.log(index);
     }
 
-    return parseInt(ceros + str);
+    return ceros + numero;
+  }
+
+  generarPdf(action = 'open') {
+    // const doc = new jspdf();
+
+    // const specialElementHandlers = {
+    //   '#editor': function (element, renderer) {
+    //     return true;
+    //   }
+    // };
+
+    // const pdfReport = this.pdf.nativeElement;
+
+    // doc.fromHTML(pdfReport.innerHTML, 15, 15, {
+    //   'elementHandlers': specialElementHandlers
+    // });
+
+    // doc.output('dataurlnewwindow');
+
+    const div = document.getElementById('pdf');
+
+    html2canvas(div).then((canvas) => {
+
+      var img = canvas.toDataURL("image/PNG");
+      var doc = new jspdf('l', 'mm', 'a4', 1);
+
+      return doc;
+    }).then((doc) => {
+      doc.output('dataurlnewwindow');
+    });
   }
 
 }

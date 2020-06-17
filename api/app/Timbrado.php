@@ -8,7 +8,7 @@ class Timbrado extends Model
 {
     protected $primaryKey = 'id';
     protected $table = 'timbrados';
-    protected $perPage = 10;
+    protected $perPage = 5;
 
     protected $fillable =[
         'numero', 'fecha_desde', 'fecha_hasta'	

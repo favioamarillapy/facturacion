@@ -4,7 +4,7 @@ export class Factura {
         public timbrado: string,
         public id_timbrado: number,
         public fecha_emision: string,
-        public numero: number,
+        public numero: string,
         public tipo: string,
         public id_cliente: number,
         public ruc: string,

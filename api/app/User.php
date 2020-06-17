@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id';
-    protected $perPage = 10;
+    protected $perPage = 5;
 
     /**
      * The attributes that are mass assignable.
