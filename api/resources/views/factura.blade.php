@@ -14,7 +14,7 @@
         }
 
         body {
-            padding: 50px 70px;
+            padding: 50px 70px 50px 50px;
         }
 
         .border-all {
@@ -41,17 +41,17 @@
     <table class="border-all" width="100%" style="width:100%; border-collapse: collapse;">
         <thead>
             <tr>
-                <td colspan="4">
-                    <table style="width:100%; border-collapse: collapse;">
+                <td colspan="4" class="border-bottom border-right">
+                    <table width="100%" style="width:100%; border-collapse: collapse;">
                         <tr>
-                            <td class="border-bottom border-right">
+                            <td class="border-bottom">
                                 <p>Osmar Daniel Diz Bobadilla</p>
                                 <p>CONTADOR</p>
                                 <p>ACTIVIDADES DE CONTABILIDAD, TENEDURIA DE LIBROS, AUDITORIA Y ASESORIA FISCAL N.C.P</p>
                             </td>
                         </tr>
                         <tr>
-                            <td class="border-bottom border-right">
+                            <td>
                                 <p>BONANZA E/ANTOLIN IRALA - Cel.: (0986) 276 848</p>
                                 <p>ITAGUA - PARAGUAY</p>
                             </td>
@@ -81,11 +81,11 @@
             </tr>
             <tr>
                 <td class="border-bottom border-right text-center" style="width: 60px;">CANT.</td>
-                <td class="border-bottom border-right" style="width: 60px;"></td>
-                <td class="border-bottom border-right">DESCRIPCIÓN</td>
+                <td class="border-bottom border-right" style="width: 100px;"></td>
+                <td class="border-bottom border-right" style="width: 400px;">DESCRIPCIÓN</td>
                 <td class="border-bottom border-right text-center" style="width: 125px;">PRECIO UNITARIO</td>
                 <td colspan="3" class="border-bottom">
-                    <table style="width:100%; border-collapse: collapse;" class="text-center">
+                    <table width="100%" style="width:100%; border-collapse: collapse;" class="text-center">
                         <tr>
                             <td colspan="3" class="border-bottom">VALOR DE VENTA</td>
                         </tr>
@@ -102,11 +102,11 @@
             @foreach ($detalles as $detalle) 
                 <tr class="border-bottom">
                     <td class="border-bottom border-right text-center" style="width: 60px;"> {{ $detalle->cantidad }}</td>
-                    <td class="border-bottom border-right" style="width: 60px;"></td>
-                    <td class="border-bottom border-right">{{ $detalle->descripcion }}</td>
+                    <td class="border-bottom border-right" style="width: 100px;"></td>
+                    <td class="border-bottom border-right" style="width: 400px;">{{ $detalle->descripcion }}</td>
                     <td class="border-bottom border-right text-center" style="width: 125px;">{{ $detalle->precio_unitario }}</td>
                     <td colspan="3" class="border-bottom">
-                        <table style="width:100%; border-collapse: collapse;" class="text-center">
+                        <table width="100%" style="width:100%; border-collapse: collapse;" class="text-center">
                             <tr colspan="3">
                                 <td class="border-right" style="width: 150px;">{{ $detalle->exento }}</td>
                                 <td class="border-right" style="width: 100px;">{{ $detalle->iva_5 }}</td>
