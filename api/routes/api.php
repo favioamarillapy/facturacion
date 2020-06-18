@@ -33,3 +33,4 @@ Route::put('ultimoUsado/{id}', 'TimbradoController@updateUltUsado');
 
 Route::resource('factura', 'FacturaController');
 Route::get('factura/detalle/{id}', 'FacturaController@detalle');
+Route::get('/factura/{id}/generarPDF', [ 'as' => 'factura.pdf', 'uses' => 'FacturaController@generarPDF']);

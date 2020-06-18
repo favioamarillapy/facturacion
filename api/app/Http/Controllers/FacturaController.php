@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Factura;
 use App\FacturaDetalle;
+use PDF;
 
 class FacturaController extends BaseController
 {
@@ -136,7 +137,7 @@ class FacturaController extends BaseController
      */
     public function show($id)
     {
-        $factura = Factura::find($id);
+        $factura = Factura::with(['cliente'])->find($id);
 
         if (is_object($factura)) {
             return $this->sendResponse(true, 'Se listaron exitosamente los registros', $factura, 200);
@@ -220,5 +221,26 @@ class FacturaController extends BaseController
         $data = $query->get();
         
         return $this->sendResponse(true, 'Listado obtenido exitosamente', $data, 200);
+    }
+
+    public function generarPDF($id) {
+        $factura = Factura::with('cliente')->find($id);
+
+        if ($factura) {
+
+            $detalles = FacturaDetalle::where('id_factura', '=', $id)->get();
+            if ($detalles) {
+
+                $pdf = PDF::loadView('factura', ['factura' => $factura, 'detalles' => $detalles]);  
+                return $pdf->stream();
+                // return $pdf->download("Factura-$factura->numero.pdf");
+
+            }
+
+            return $this->sendResponse(false, 'No se encontraron detalles para esta factura', null, 404);
+
+        }
+
+        return $this->sendResponse(false, 'No se encontro la factura', null, 404);
     }
 }
