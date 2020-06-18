@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import * as moment from "moment";
 import { FacturaService } from 'src/app/services/factura.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { TimbradoService } from 'src/app/services/timbrado.service';
 import { Timbrado } from 'src/app/models/timbrado';
 import { Factura } from 'src/app/models/factura';
-import * as jspdf from 'jspdf';
-import html2canvas from 'html2canvas';
+import { environment } from 'src/environments/environment';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-facturacion',
@@ -54,6 +53,7 @@ export class FacturacionComponent implements OnInit {
 
   ngOnInit() {
     this.mostrarFormulario(false, "Listado");
+    this.getClienteById();
     this.paginacion();
   }
 
@@ -180,7 +180,7 @@ export class FacturacionComponent implements OnInit {
       }
 
       setTimeout(() => {
-        this.generarPdf();
+        this.generarPdf(response.data.id);
       }, 1500);
 
       this.goFrmRegFactura = false;
@@ -317,18 +317,19 @@ export class FacturacionComponent implements OnInit {
         this.factura.razon_social = response.data[0].razon_social;
         this.factura.direccion = response.data[0].direccion;
       } else {
-        this.mensajeError = 'No se encuentra el cliente'
+        this.mensajeError = 'No se encuentra el cliente';
       }
     } else {
-      this.mensajeError = 'Error al obtener cliente'
+      this.mensajeError = 'Error al obtener cliente';
     }
   }
 
-  async getClienteById(id) {
+  async getClienteById(id?) {
     const response: any = await this.clienteService.get(id, null);
 
     if (response.success) {
-      this.getCliente(response.data.ruc);
+      if (id) {}
+      else { this.listaClientes = response.data; }
     } else {
       this.mensajeError = 'Error al obtener cliente'
     }
@@ -357,34 +358,19 @@ export class FacturacionComponent implements OnInit {
     return ceros + numero;
   }
 
-  generarPdf(action = 'open') {
-    // const doc = new jspdf();
+  rellenarDatosFormulario(event) {
+    const cliente = this.listaClientes.find(cliente => cliente.id == event.value);
 
-    // const specialElementHandlers = {
-    //   '#editor': function (element, renderer) {
-    //     return true;
-    //   }
-    // };
+    if (cliente) {
+      this.factura.id_cliente = cliente.id;
+      this.factura.razon_social = cliente.razon_social;
+      this.factura.direccion = cliente.direccion;
+      this.factura.ruc = cliente.ruc;
+    }
+  }
 
-    // const pdfReport = this.pdf.nativeElement;
-
-    // doc.fromHTML(pdfReport.innerHTML, 15, 15, {
-    //   'elementHandlers': specialElementHandlers
-    // });
-
-    // doc.output('dataurlnewwindow');
-
-    const div = document.getElementById('pdf');
-
-    html2canvas(div).then((canvas) => {
-
-      var img = canvas.toDataURL("image/PNG");
-      var doc = new jspdf('l', 'mm', 'a4', 1);
-
-      return doc;
-    }).then((doc) => {
-      doc.output('dataurlnewwindow');
-    });
+  generarPdf(idFactura) {
+    window.open(`${environment.api}/factura/${idFactura}/generarPDF`, '_blank');
   }
 
 }

@@ -5,7 +5,7 @@ import { AgmCoreModule } from '@agm/core';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MAT_DATE_LOCALE } from '@angular/material';
+import { MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, MAT_DATE_LOCALE, MatSelectModule } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,6 +47,7 @@ import { TimbradoComponent } from './pages/timbrado/timbrado.component';
     MatFormFieldModule,
     MatNativeDateModule,
     MatInputModule,
+    MatSelectModule,
     BrowserAnimationsModule
   ],
   exports: [
