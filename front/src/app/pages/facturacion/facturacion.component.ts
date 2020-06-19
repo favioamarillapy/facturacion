@@ -348,10 +348,10 @@ export class FacturacionComponent implements OnInit {
   }
 
   setearNroFactura(numero: string) {
-    let longitud: number = numero.length;
+    let longitud: number = 7 - numero.length;
     let ceros: string = "";
 
-    for (let index = 0; index < 7; index++) {
+    for (let index = 0; index < longitud; index++) {
       ceros += "0";
     }
 
