@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Factura;
 use App\FacturaDetalle;
+use App\Convertidor;
 use PDF;
 
 class FacturaController extends BaseController
@@ -230,8 +231,14 @@ class FacturaController extends BaseController
 
             $detalles = FacturaDetalle::where('id_factura', '=', $id)->get();
             if ($detalles) {
+                $convertidor = new Convertidor();
+                $datos =  [
+                    'factura' => $factura,
+                    'detalles' => $detalles,
+                    'total_texto' => strtoupper($convertidor->numeroATexto($factura->total))
+                ];
                 //return view('factura', ['factura' => $factura, 'detalles' => $detalles]);
-                $pdf = PDF::loadView('factura', ['factura' => $factura, 'detalles' => $detalles])->setPaper('a4', 'portrait');  
+                $pdf = PDF::loadView('factura', $datos)->setPaper('a4', 'portrait');  
                 return $pdf->stream();
                 // return $pdf->download("Factura-$factura->numero.pdf");
 
