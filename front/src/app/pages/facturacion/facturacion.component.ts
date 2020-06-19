@@ -53,7 +53,7 @@ export class FacturacionComponent implements OnInit {
 
   ngOnInit() {
     this.mostrarFormulario(false, "Listado");
-    this.getClienteById();
+    this.getClientes();
     this.paginacion();
   }
 
@@ -202,7 +202,12 @@ export class FacturacionComponent implements OnInit {
       this.factura = response.data;
 
       await this.getTimbradoById(this.factura.id_timbrado);
-      await this.getClienteById(this.factura.id_cliente);
+      await this.getClientes();
+      let event = {
+        value: this.factura.id_cliente
+      }
+
+      await this.rellenarDatosFormulario(event);
       await this.getDetalleFactura(id_factura);
       this.page = 'cabecera';
       this.mostrarFormulario(true, 'Ver Factura');
@@ -324,7 +329,7 @@ export class FacturacionComponent implements OnInit {
     }
   }
 
-  async getClienteById(id?) {
+  async getClientes(id?) {
     const response: any = await this.clienteService.get(id, null);
 
     if (response.success) {
