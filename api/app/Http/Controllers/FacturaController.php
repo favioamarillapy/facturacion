@@ -230,8 +230,8 @@ class FacturaController extends BaseController
 
             $detalles = FacturaDetalle::where('id_factura', '=', $id)->get();
             if ($detalles) {
-
-                $pdf = PDF::loadView('factura', ['factura' => $factura, 'detalles' => $detalles])->setPaper('a4', 'landscape');  
+                //return view('factura', ['factura' => $factura, 'detalles' => $detalles]);
+                $pdf = PDF::loadView('factura', ['factura' => $factura, 'detalles' => $detalles])->setPaper('a4', 'portrait');  
                 return $pdf->stream();
                 // return $pdf->download("Factura-$factura->numero.pdf");
 
