@@ -237,8 +237,7 @@ class FacturaController extends BaseController
                     'detalles' => $detalles,
                     'total_texto' => strtoupper($convertidor->numeroATexto($factura->total))
                 ];
-                //return view('factura', ['factura' => $factura, 'detalles' => $detalles]);
-                $pdf = PDF::loadView('factura', $datos)->setPaper('a4', 'portrait');  
+                $pdf = PDF::loadView('factura', $datos)->setPaper('A4', 'portrait');  
                 return $pdf->stream();
                 // return $pdf->download("Factura-$factura->numero.pdf");
 
