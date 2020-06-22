@@ -44,8 +44,8 @@
             <div style="margin-left: 80px; margin-top: 15px">{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</div>
             
             <div style="margin-left: 80px; margin-top: 5px">{{ $factura->cliente->ruc }}</div>
-            <div style="margin-left: 180px; margin-top: 7px">{{ $factura->cliente->razon_social }}</div>
-            <div style="margin-left: 95px; margin-top: 3px">{{ $factura->cliente->direccion }}</div>
+            <div style="margin-left: 170px; margin-top: 6px">{{ $factura->cliente->razon_social }}</div>
+            <div style="margin-left: 90px; margin-top: 3px">{{ $factura->cliente->direccion }}</div>
         </div>
 
         <div style="width: 100%; height: 15px;"></div>
