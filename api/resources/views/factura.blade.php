@@ -41,7 +41,11 @@
         <div style="width: 100%; height: 8px;"></div>
         {{-- datos del cliente --}}
         <div style="width: 100%;">
-            <div style="margin-left: 80px; margin-top: 15px">{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</div>
+            <div style="margin-left: 80px; margin-top: 15px">
+                <span>{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</span>
+                <span style="{{ ($factura->tipo != 'CO') ? 'display: none;' : ''}} margin-left: 450px;">X</span>
+                <span style="{{ ($factura->tipo != 'CR') ? 'display: none;' : ''}} margin-left: 542px;">X</span>
+            </div>
             
             <div style="margin-left: 80px; margin-top: 5px">{{ $factura->cliente->ruc }}</div>
             <div style="margin-left: 170px; margin-top: 6px">{{ $factura->cliente->razon_social }}</div>
