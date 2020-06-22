@@ -20,6 +20,9 @@ export class ClienteComponent implements OnInit {
   public porPagina;
   public total;
 
+  public mensaje: '';
+  public success: false;
+
   constructor(
     private clienteService: ClienteService
   ) {
@@ -40,6 +43,8 @@ export class ClienteComponent implements OnInit {
   mostrarFormulario(flag, accion, limpiarError?) {
     this.form = flag
     this.accion = accion;
+    this.mensaje = '';
+    this.success = false;
 
     if (flag && accion == 'Registrar') {
       this.cliente = new Cliente(null, null, null, null, null);
@@ -96,9 +101,15 @@ export class ClienteComponent implements OnInit {
     const response: any = await this.clienteService.registrar(this.cliente);
 
     this.cargando = false;
+
+    this.mensaje = response.message;
+    this.success = response.success
+
     if (response.success) {
       this.paginacion();
-      this.mostrarFormulario(false, 'Listado');
+      setTimeout(() => {
+        this.mostrarFormulario(false, 'Listado');
+      }, 1500);
     } else {
 
     }
@@ -109,9 +120,15 @@ export class ClienteComponent implements OnInit {
     const response: any = await this.clienteService.actualizar(this.cliente, this.cliente.id);
 
     this.cargando = false;
+    
+    this.mensaje = response.message;
+    this.success = response.success
+
     if (response.success) {
       this.paginacion();
-      this.mostrarFormulario(false, 'Listado');
+      setTimeout(() => {
+        this.mostrarFormulario(false, 'Listado');
+      }, 1500);
     } else {
 
     }

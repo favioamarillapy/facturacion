@@ -22,6 +22,9 @@ export class TimbradoComponent implements OnInit {
   public porPagina;
   public total;
 
+  public mensaje: '';
+  public success: false;
+
   constructor(
     private timbradoService: TimbradoService
   ) {
@@ -41,6 +44,8 @@ export class TimbradoComponent implements OnInit {
   mostrarFormulario(flag, accion, limpiarError?) {
     this.form = flag
     this.accion = accion;
+    this.mensaje = '';
+    this.success = false;
 
     if (flag && accion == 'Registrar') {
       this.timbrado = new Timbrado(null, null, null, null, null);
@@ -100,10 +105,16 @@ export class TimbradoComponent implements OnInit {
     this.timbrado.fecha_hasta = moment(this.timbrado.fecha_hasta).format('YYYY-MM-DD');
 
     const response: any = await this.timbradoService.registrar(this.timbrado);
+    
     this.cargando = false;
+    this.mensaje = response.message;
+    this.success = response.success
+
     if (response.success) {
       this.paginacion();
-      this.mostrarFormulario(false, 'Listado');
+      setTimeout(() => {
+        this.mostrarFormulario(false, 'Listado');
+      }, 1500);
     } else {
 
     }
@@ -114,13 +125,18 @@ export class TimbradoComponent implements OnInit {
 
     this.timbrado.fecha_desde = moment(this.timbrado.fecha_desde).format('YYYY-MM-DD')
     this.timbrado.fecha_hasta = moment(this.timbrado.fecha_hasta).format('YYYY-MM-DD');
-console.log(this.timbrado);
+    
     const response: any = await this.timbradoService.actualizar(this.timbrado, this.timbrado.id);
-console.log(response)
+    
     this.cargando = false;
+    this.mensaje = response.message;
+    this.success = response.success
+
     if (response.success) {
       this.paginacion();
-      this.mostrarFormulario(false, 'Listado');
+      setTimeout(() => {
+        this.mostrarFormulario(false, 'Listado');
+      }, 1500);
     } else {
 
     }
