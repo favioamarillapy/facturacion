@@ -111,7 +111,7 @@ export class UsuarioService {
   }
 
   async getUsuario() {
-    if (!this.usuario) { this.validarToken(); }
+    if (!this.usuario) { await this.validarToken(); }
     return await (this.usuario) ? { ...this.usuario } : null;
   }
 

@@ -19,8 +19,8 @@ export class HeaderComponent implements OnInit {
     this.usuario = new Usuario(null, null, null, null, null, null);
   }
 
-  ngOnInit() {
-    this.getUsuario();
+  async ngOnInit() {
+    await this.getUsuario();
 
     this.usuarioService.loginEmitter
       .subscribe(response => {
@@ -40,6 +40,7 @@ export class HeaderComponent implements OnInit {
 
   async getUsuario() {
     this.usuario = await this.usuarioService.getUsuario();
+    console.log(this.usuario);
   }
 
 }
