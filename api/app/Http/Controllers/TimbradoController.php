@@ -34,6 +34,17 @@ class TimbradoController extends BaseController
             $query->where('fecha_hasta', '=', $fecha_hasta);
         }
 
+        $numero_desde = $request->query('numero_desde');
+        if ($numero_desde) {
+            $query->where('numero_desde', 'LIKE', '%'.$numero_desde.'%');
+        }
+
+        $numero_hasta = $request->query('numero_hasta');
+        if ($numero_hasta) {
+            $query->where('numero_hasta', 'LIKE', '%'.$numero_hasta.'%');
+        }
+
+
         $paginar = $request->query('paginar');
         $listar = (boolval($paginar)) ? 'paginate' : 'get';
 
@@ -63,11 +74,15 @@ class TimbradoController extends BaseController
         $numero = $request->input("numero");
         $fecha_desde = $request->input("fecha_desde");
         $fecha_hasta = $request->input("fecha_hasta");
+        $numero_desde = $request->input("numero_desde");
+        $numero_hasta = $request->input("numero_hasta");
 
         $validator = Validator::make($request->all(), [
             'numero'  => 'required',
             'fecha_desde'  => 'required',
-            'fecha_hasta'  => 'required'
+            'fecha_hasta'  => 'required',
+            'numero_desde'  => 'required',
+            'numero_hasta'  => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -78,6 +93,8 @@ class TimbradoController extends BaseController
         $timbrado->numero = $numero;
         $timbrado->fecha_desde = $fecha_desde;
         $timbrado->fecha_hasta = $fecha_hasta;
+        $timbrado->numero_desde = $numero_desde;
+        $timbrado->numero_hasta = $numero_hasta;
 
         if ($timbrado->save()) {
             return $this->sendResponse(true, 'Timbrado registrado', $timbrado, 201);
@@ -126,11 +143,15 @@ class TimbradoController extends BaseController
         $numero = $request->input("numero");
         $fecha_desde = $request->input("fecha_desde");
         $fecha_hasta = $request->input("fecha_hasta");
+        $numero_desde = $request->input("numero_desde");
+        $numero_hasta = $request->input("numero_hasta");
 
         $validator = Validator::make($request->all(), [
             'numero'  => 'required',
             'fecha_desde'  => 'required',
-            'fecha_hasta'  => 'required'
+            'fecha_hasta'  => 'required',
+            'numero_desde'  => 'required',
+            'numero_hasta'  => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -142,6 +163,8 @@ class TimbradoController extends BaseController
             $timbrado->numero = $numero;
             $timbrado->fecha_desde = $fecha_desde;
             $timbrado->fecha_hasta = $fecha_hasta;
+            $timbrado->numero_desde = $numero_desde;
+            $timbrado->numero_hasta = $numero_hasta;
             
             if ($timbrado->save()) {
                 return $this->sendResponse(true, 'Timbrado actualizado', $timbrado, 200);

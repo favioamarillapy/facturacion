@@ -27,6 +27,8 @@
           <th scope="col">Numero</th>
           <th scope="col">Fecha Desde</th>
           <th scope="col">Fecha Hasta</th>
+          <th scope="col">Numero Desde</th>
+          <th scope="col">Numero Hasta</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
@@ -36,6 +38,8 @@
           <td>{{ fila.numero }}</td>
           <td>{{ fila.fecha_desde }}</td>
           <td>{{ fila.fecha_hasta }}</td>
+          <td>{{ fila.numero_desde }}</td>
+          <td>{{ fila.numero_hasta }}</td>
           <td>
             <button class="btn btn-warning btn-sm" (click)="getTimbrado(fila.id)"> <i class="fas fa-edit"></i>
             </button>
@@ -90,6 +94,22 @@
             name="fecha_hasta" autocomplete="off">
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Numero Desde" name="numero_desde" [(ngModel)]="timbrado.numero_desde" autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Numero Hasta" name="numero_hasta" [(ngModel)]="timbrado.numero_hasta" autocomplete="off">
         </mat-form-field>
       </div>
     </div>

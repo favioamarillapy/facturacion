@@ -19,7 +19,6 @@ export class FacturacionComponent implements OnInit {
   public mensajeError = '';
 
   listaFactura: any;
-  listaClientes: any;
   listaServicios = [];
 
   detalleFactura: any;
@@ -53,7 +52,6 @@ export class FacturacionComponent implements OnInit {
 
   ngOnInit() {
     this.mostrarFormulario(false, "Listado");
-    this.getClientes();
     this.paginacion();
   }
 
@@ -116,7 +114,7 @@ export class FacturacionComponent implements OnInit {
         this.factura.timbrado = this.timbrado.numero;
 
         let numero: number;
-        (this.timbrado.ult_usado) ? numero = this.timbrado.ult_usado + 1 : numero = 1;
+        (this.timbrado.ult_usado) ? numero = this.timbrado.ult_usado + 1 : numero = this.timbrado.numero_desde;
         this.factura.numero = '001-001-' + this.setearNroFactura(numero.toString());
 
       }
@@ -202,12 +200,15 @@ export class FacturacionComponent implements OnInit {
       this.factura = response.data;
 
       await this.getTimbradoById(this.factura.id_timbrado);
-      await this.getClientes();
+      await this.getCliente(response.data.cliente.ruc);
       let event = {
         value: this.factura.id_cliente
       }
 
-      await this.rellenarDatosFormulario(event);
+      this.factura.ruc = this.factura.ruc;
+      this.factura.razon_social = this.factura.razon_social;
+      this.factura.direccion = this.factura.direccion;
+      
       await this.getDetalleFactura(id_factura);
       this.page = 'cabecera';
       this.mostrarFormulario(true, 'Ver Factura');
@@ -329,17 +330,6 @@ export class FacturacionComponent implements OnInit {
     }
   }
 
-  async getClientes(id?) {
-    const response: any = await this.clienteService.get(id, null);
-
-    if (response.success) {
-      if (id) {}
-      else { this.listaClientes = response.data; }
-    } else {
-      this.mensajeError = 'Error al obtener cliente'
-    }
-  }
-
   moverPage(pageValue) {
     if (pageValue == 'detalle') {
       if (!this.factura.numero || !this.factura.fecha_emision
@@ -361,17 +351,6 @@ export class FacturacionComponent implements OnInit {
     }
 
     return ceros + numero;
-  }
-
-  rellenarDatosFormulario(event) {
-    const cliente = this.listaClientes.find(cliente => cliente.id == event.value);
-
-    if (cliente) {
-      this.factura.id_cliente = cliente.id;
-      this.factura.razon_social = cliente.razon_social;
-      this.factura.direccion = cliente.direccion;
-      this.factura.ruc = cliente.ruc;
-    }
   }
 
   generarPdf(idFactura) {

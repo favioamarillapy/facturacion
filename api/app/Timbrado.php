@@ -11,6 +11,6 @@ class Timbrado extends Model
     protected $perPage = 5;
 
     protected $fillable =[
-        'numero', 'fecha_desde', 'fecha_hasta'	
+        'numero', 'fecha_desde', 'fecha_hasta', 'numero_desde', 'numero_hasta'
     ];
 }

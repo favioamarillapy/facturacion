@@ -48,7 +48,7 @@ export class TimbradoComponent implements OnInit {
     this.success = false;
 
     if (flag && accion == 'Registrar') {
-      this.timbrado = new Timbrado(null, null, null, null, null);
+      this.timbrado = new Timbrado(null, null, null, null, null, null, null);
     }
   }
 
@@ -125,7 +125,7 @@ export class TimbradoComponent implements OnInit {
 
     this.timbrado.fecha_desde = moment(this.timbrado.fecha_desde).format('YYYY-MM-DD')
     this.timbrado.fecha_hasta = moment(this.timbrado.fecha_hasta).format('YYYY-MM-DD');
-    
+    console.log(this.timbrado);
     const response: any = await this.timbradoService.actualizar(this.timbrado, this.timbrado.id);
     
     this.cargando = false;
