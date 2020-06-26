@@ -32,6 +32,23 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>
+            <input type="text" name="ruc" class="form-control" placeholder="Ruc" [(ngModel)]="filtrosTabla.ruc" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td>
+            <input type="text" name="razon_social" class="form-control" placeholder="Razon Social" [(ngModel)]="filtrosTabla.razon_social" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td>
+            <input type="text" name="telefono" class="form-control" placeholder="Telefono" [(ngModel)]="filtrosTabla.telefono" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td>
+            <input type="text" name="direccion" class="form-control" placeholder="Direccion" [(ngModel)]="filtrosTabla.direccion" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td class="text-right">
+            <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i class="fas fa-times"></i></button> &nbsp;
+          </td>
+        </tr>
         <tr
           *ngFor="let fila of listaCliente | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
           <td>{{ fila.ruc }}</td>

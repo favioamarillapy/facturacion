@@ -33,6 +33,22 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>
+            <input type="text" name="numero" class="form-control" placeholder="Numero" [(ngModel)]="filtrosTabla.numero" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            <input type="text" name="numero_desde" class="form-control" placeholder="Numero desde" [(ngModel)]="filtrosTabla.numero_desde" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td>
+            <input type="text" name="numero_hasta" class="form-control" placeholder="Numero hasta" [(ngModel)]="filtrosTabla.numero_hasta" (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td class="text-right">
+            <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i class="fas fa-times"></i></button> &nbsp;
+          </td>
+        </tr>
         <tr
           *ngFor="let fila of listaTimbrado | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
           <td>{{ fila.numero }}</td>

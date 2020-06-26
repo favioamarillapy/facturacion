@@ -26,16 +26,47 @@
         <tr>
           <th scope="col">Fecha Emision</th>
           <th scope="col">Numero</th>
+          <th scope="col">Condicion</th>
           <th scope="col">Razon Social</th>
           <th scope="col">Total</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td></td>
+          <td>
+            <input type="text" name="numero" class="form-control" placeholder="Numero" [(ngModel)]="filtrosTabla.numero"
+              (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td>
+            <select name="tipo" class="form-control" [(ngModel)]="filtrosTabla.tipo" (change)="filtrarTabla($event)">
+              <option value="null">-- SELECCIONAR --</option>
+              <option value="CO">CONTADO</option>
+              <option value="CR">CREDITO</option>
+            </select>
+          </td>
+          <td>
+            <select name="id_cliente" class="form-control" [(ngModel)]="filtrosTabla.id_cliente" (change)="filtrarTabla($event)">
+              <option value="null">-- SELECCIONAR --</option>
+              <option *ngFor="let cliente of listaClientes" value="{{cliente.id}}"> {{cliente.razon_social}}
+              </option>
+          </select>
+          </td>
+          <td>
+            <input type="text" name="total" class="form-control" placeholder="Total" [(ngModel)]="filtrosTabla.total"
+              (keyup.enter)="filtrarTabla($event)">
+          </td>
+          <td class="text-right">
+            <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i
+                class="fas fa-times"></i></button> &nbsp;
+          </td>
+        </tr>
         <tr
           *ngFor="let fila of listaFactura | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
           <td>{{ fila.fecha_emision }}</td>
           <td>{{ fila.numero }}</td>
+          <td>{{ fila.tipo }}</td>
           <td>{{ fila.cliente.razon_social }}</td>
           <td>{{ fila.total }}</td>
           <td>

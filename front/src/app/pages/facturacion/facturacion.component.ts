@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FacturaService } from 'src/app/services/factura.service';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { TimbradoService } from 'src/app/services/timbrado.service';
@@ -6,6 +6,8 @@ import { Timbrado } from 'src/app/models/timbrado';
 import { Factura } from 'src/app/models/factura';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
+import { FormControl } from '@angular/forms';
+import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-facturacion',
@@ -18,6 +20,7 @@ export class FacturacionComponent implements OnInit {
   public page = 'cabecera';
   public mensajeError = '';
 
+  listaClientes: any;
   listaFactura: any;
   listaServicios = [];
 
@@ -38,21 +41,35 @@ export class FacturacionComponent implements OnInit {
   timbrado: Timbrado
   factura: Factura
 
-  @ViewChild('pdf') pdf: ElementRef;
+  public parametros: any = {};
+  public filtrosTabla: any = {};
+  public parametrosTabla: any = []
 
+  
   constructor(
     private facturaService: FacturaService,
     private clienteService: ClienteService,
     private timbradoService: TimbradoService
   ) {
+    this.inicializarFiltros();
     this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.goFrmRegFactura = false;
     this.goFrmServicio = false;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mostrarFormulario(false, "Listado");
-    this.paginacion();
+    await this.getClientes();
+    await this.paginacion();
+  }
+
+  async inicializarFiltros() {
+    this.filtrosTabla = {
+      numero: '',
+      tipo: null,
+      id_cliente: null,
+      total: ''
+    }
   }
 
   inicilizarDetalleFactura() {
@@ -138,19 +155,28 @@ export class FacturacionComponent implements OnInit {
     this.paginaActual = (pagina) ? pagina : this.paginaActual;
     this.listaFactura = null;
     this.accion = 'Listado';
-    let parametros = {
-      paginar: true
-    }
-    const response: any = await this.facturaService.get(null, parametros);
 
+    this.parametros = null;
+    this.parametros = {
+      paginar: true,
+      page: this.paginaActual
+    };
+
+    if (parametrosFiltro) {
+      this.parametrosTabla.forEach(element => {
+        this.parametros[element.key] = element.value;
+      });
+    }
+
+    const response: any = await this.facturaService.get(null, this.parametros);
     if (response.success) {
-      this.listaFactura = null;
       this.listaFactura = response.data;
       this.porPagina = response.per_page;
       this.total = response.total;
     } else {
 
     }
+
   }
 
   async submit() {
@@ -357,4 +383,29 @@ export class FacturacionComponent implements OnInit {
     window.open(`${environment.api}/factura/${idFactura}/generarPDF`, '_blank');
   }
 
+  async filtrarTabla(event?) {
+    if (event) {
+      let key = event.target.name;
+      let value = event.target.value;
+      let parametros = { key, value };
+      this.parametrosTabla.push(parametros);
+
+      await this.paginacion(null, parametros);
+    } else {
+      await this.inicializarFiltros();
+      await this.paginacion(null, null);
+    }
+  }
+
+  async getClientes() {
+    const response: any = await this.clienteService.get(null, null);
+    
+    if (response.success) {
+      this.listaClientes = response.data;
+    } else {
+
+    }
+
+  }
+  
 }

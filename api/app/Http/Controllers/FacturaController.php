@@ -23,15 +23,6 @@ class FacturaController extends BaseController
     {
         $query = Factura::with(['cliente']);
 
-        $id_cliente = $request->query('id_cliente');
-        if ($id_cliente) {
-            $query->where('id_cliente', '=', $id_cliente);
-        }
-
-        $fecha_emision = $request->query('fecha_emision');
-        if ($fecha_emision) {
-            $query->where('fecha_emision', '=', $fecha_emision);
-        }
 
         $numero = $request->query('numero');
         if ($numero) {
@@ -41,6 +32,16 @@ class FacturaController extends BaseController
         $tipo = $request->query('tipo');
         if ($tipo) {
             $query->where('tipo', 'LIKE', '%'.$tipo.'%');
+        }
+
+        $id_cliente = $request->query('id_cliente');
+        if ($id_cliente) {
+            $query->where('id_cliente', '=', $id_cliente);
+        }
+
+        $total = $request->query('total');
+        if ($total) {
+            $query->where('total', 'LIKE', '%'.$total.'%');
         }
 
         $paginar = $request->query('paginar');

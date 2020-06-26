@@ -36,7 +36,10 @@ export class ClienteComponent implements OnInit {
 
   async inicializarFiltros() {
     this.filtrosTabla = {
-      nombre: ''
+      ruc: '',
+      razon_social: '',
+      telefono: '',
+      direccion: ''
     }
   }
 

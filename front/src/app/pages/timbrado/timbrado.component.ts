@@ -37,7 +37,9 @@ export class TimbradoComponent implements OnInit {
 
   async inicializarFiltros() {
     this.filtrosTabla = {
-      nombre: ''
+      numero: '',
+      numero_desde: '',
+      numero_hasta: ''
     }
   }
 
@@ -125,7 +127,7 @@ export class TimbradoComponent implements OnInit {
 
     this.timbrado.fecha_desde = moment(this.timbrado.fecha_desde).format('YYYY-MM-DD')
     this.timbrado.fecha_hasta = moment(this.timbrado.fecha_hasta).format('YYYY-MM-DD');
-    console.log(this.timbrado);
+    
     const response: any = await this.timbradoService.actualizar(this.timbrado, this.timbrado.id);
     
     this.cargando = false;
