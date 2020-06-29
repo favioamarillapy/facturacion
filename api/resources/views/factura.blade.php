@@ -86,9 +86,9 @@
             <span style="margin-left: 100px;">Gs. {{ $total_texto }}</span>
         </div>
         <div style="width: 100%; margin-top: 10px;">
-            <span style="margin-left: 200px;">{{ number_format(($total5 / 11), 3, ",", ".") }}</span>
-            <span style="margin-left: 140px">{{ number_format(($total10 / 11), 3, ",", ".") }}</span>
-            <span style="margin-left: 140px">{{ number_format((($total5 / 11) + ($total10 / 11)), 3, ",", ".") }}</span>
+            <span style="margin-left: 200px;">{{ number_format(intval($total5 / 11), 0, ",", ".") }}</span>
+            <span style="margin-left: 140px">{{ number_format(intval($total10 / 11), 0, ",", ".") }}</span>
+            <span style="margin-left: 140px">{{ number_format(intval(($total5 / 11) + ($total10 / 11)), 0, ",", ".") }}</span>
         </div>
     </div>
 
