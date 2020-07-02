@@ -1,0 +1,42 @@
+1. Instalar WAMPSERVER
+
+
+2. Iniciar Apache y MySql automaticamente
+Panel de control --> Herramientas administrativa --> Servicios
+Busca el servicio wampapache y wampmysqld e ingresa en el mismo.
+En “Tipo de inicio” selecciona la opción “Automático”.
+
+
+3. Entrar al fichero C:\wamp64\bin\apache\apache2.4.41\conf\httpd.conf y añadir o descomentar el include del fichero de los hosts virutales:
+Include conf/extra/httpd-vhosts.conf
+
+
+4. Entrar al fichero C:\wamp64\bin\apache\apache2.4.41\conf\extra\httpd-vhosts.conf y añadir los virtualhosts.
+
+<VirtualHost *:80>   
+    DocumentRoot "C:\wamp64\www\api\public"
+    ServerName api.facturacion.devel
+    ServerAlias www.api.facturacion.devel
+    <Directory "C:\wamp64\www\api\public">
+        Options Indexes FollowSymLinks     
+        AllowOverride All
+        Order Deny,Allow
+        Allow from all     
+    </Directory> 
+</VirtualHost>
+
+<VirtualHost *:80>   
+    DocumentRoot "C:\wamp64\www\facturacion"
+    ServerName facturacion.devel
+    ServerAlias www.facturacion.devel
+    <Directory "C:\wamp64\www\facturacion">
+        Options Indexes FollowSymLinks     
+        AllowOverride All
+        Order Deny,Allow
+        Allow from all     
+    </Directory> 
+</VirtualHost>
+
+5. Añadir al fichero hosts de nuestro sistema, en el caso de Windows C:\Windows\System32\drivers\etc\hosts
+127.0.0.1   	api.facturacion.devel
+127.0.0.1   	facturacion.devel
