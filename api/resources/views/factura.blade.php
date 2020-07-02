@@ -80,7 +80,10 @@
         
         {{-- totales --}}
         <div style="width: 100%;">
-            <span style="margin-left: 80px;">{{ $factura->total }}</span> <br> <br>
+            <span style="margin-left: 80px;">{{ $factura->total }}</span>
+            <span style="margin-left: 368px;">{{ $factura->exento }}</span>
+            <span style="margin-left: 65px;">{{ $factura->iva_5 }}</span>
+            <span style="margin-left: 79px;">{{ $factura->iva_10 }}</span> <br> <br>
         </div>
         <div style="width: 100%;">
             <span style="margin-left: 100px;">Gs. {{ $total_texto }}</span>
