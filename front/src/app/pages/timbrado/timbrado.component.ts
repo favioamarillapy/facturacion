@@ -39,7 +39,9 @@ export class TimbradoComponent implements OnInit {
     this.filtrosTabla = {
       numero: '',
       numero_desde: '',
-      numero_hasta: ''
+      numero_hasta: '',
+      fecha_desde: '',
+      fecha_hasta: ''
     }
   }
 

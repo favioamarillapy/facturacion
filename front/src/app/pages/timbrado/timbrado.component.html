@@ -37,8 +37,12 @@
           <td>
             <input type="text" name="numero" class="form-control" placeholder="Numero" [(ngModel)]="filtrosTabla.numero" (keyup.enter)="filtrarTabla($event)">
           </td>
-          <td></td>
-          <td></td>
+          <td>
+            <input type="date" class="form-control" name="fecha_desde" placeholder="Fecha Desde" [(ngModel)]="filtrosTabla.fecha_desde" (change)="filtrarTabla($event)">
+          </td>
+          <td>
+            <input type="date" class="form-control" name="fecha_hasta" placeholder="Fecha Desde" [(ngModel)]="filtrosTabla.fecha_hasta" (change)="filtrarTabla($event)">
+          </td>
           <td>
             <input type="text" name="numero_desde" class="form-control" placeholder="Numero desde" [(ngModel)]="filtrosTabla.numero_desde" (keyup.enter)="filtrarTabla($event)">
           </td>
@@ -52,8 +56,8 @@
         <tr
           *ngFor="let fila of listaTimbrado | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
           <td>{{ fila.numero }}</td>
-          <td>{{ fila.fecha_desde }}</td>
-          <td>{{ fila.fecha_hasta }}</td>
+          <td>{{ fila.fecha_desde | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ fila.fecha_hasta | date: 'dd/MM/yyyy' }}</td>
           <td>{{ fila.numero_desde }}</td>
           <td>{{ fila.numero_hasta }}</td>
           <td>
