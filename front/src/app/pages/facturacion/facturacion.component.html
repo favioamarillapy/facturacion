@@ -29,7 +29,7 @@
           <th scope="col">Condicion</th>
           <th scope="col">Razon Social</th>
           <th scope="col">Total</th>
-          <th scope="col">Acciones</th>
+          <th scope="col" class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -61,7 +61,7 @@
             <input type="text" name="total" class="form-control" placeholder="Total" [(ngModel)]="filtrosTabla.total"
               (keyup.enter)="filtrarTabla($event)">
           </td>
-          <td class="text-right">
+          <td class="text-center">
             <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i
                 class="fas fa-times"></i></button> &nbsp;
           </td>
@@ -76,11 +76,11 @@
           </td>
           <td>{{ fila.cliente.razon_social }}</td>
           <td>{{ fila.total | numberFormat }}</td>
-          <td>
-            <button class="btn btn-warning btn-sm" (click)="getFactura(fila.id)"> <i class="fas fa-eye"></i> </button> |
-            <button type="button" class="btn btn-default border" (click)="generarPdf(fila.id)">
-              <i class="fas fa-print"></i>
-            </button>
+          <td class="text-center">
+            <button class="btn btn-round btn-sm btn-warning" (click)="getFactura(fila.id)"><i
+                class="fas fa-edit"></i></button>
+            <button class="btn btn-round btn-sm btn-default border" (click)="generarPdf(fila.id)"><i
+                class="fas fa-print"></i></button>
           </td>
         </tr>
       </tbody>
@@ -178,7 +178,7 @@
     <h3 *ngIf="page == 'detalle'">Detalles de Factura</h3>
     <div class="row" *ngIf="page == 'detalle'">
 
-      <div class="form-group col-md-2" *ngIf="accion != 'Ver Factura'">
+      <div class="form-group col-md-2">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Cantidad" [(ngModel)]="detalleFactura.cantidad">
         </mat-form-field>
@@ -186,7 +186,7 @@
           Este campo es obligatorio</p>
       </div>
 
-      <div class="form-group col-md-3" *ngIf="accion != 'Ver Factura'">
+      <div class="form-group col-md-3">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Descripcion" [(ngModel)]="detalleFactura.descripcion">
         </mat-form-field>
@@ -194,7 +194,7 @@
           Este campo es obligatorio</p>
       </div>
 
-      <div class="form-group col-md-3" *ngIf="accion != 'Ver Factura'">
+      <div class="form-group col-md-3">
         <mat-form-field class="example-full-width ">
           <input matInput placeholder="Precio Unitario" [(ngModel)]="detalleFactura.precio_unitario">
         </mat-form-field>
@@ -202,7 +202,7 @@
           Este campo es obligatorio</p>
       </div>
 
-      <div class="form-group col-md-3" *ngIf="accion != 'Ver Factura'">
+      <div class="form-group col-md-3">
         <mat-form-field class="example-full-width">
           <select matNativeControl placeholder="Tipo de impuesto" [(ngModel)]="detalleFactura.impuesto">
             <option value="null">-- Seleccione --</option>
@@ -215,10 +215,13 @@
           Este campo es obligatorio</p>
       </div>
 
-      <div class="form-group col-md-1" *ngIf="accion != 'Ver Factura'">
-        <button *ngIf="accion != 'Ver Factura'" type="button" class="btn btn-success" (click)="agregarServicio()"
+      <div class="form-group col-md-1">
+        <button type="button" class="btn btn-success" (click)="agregarServicio()" *ngIf="!editandoServicio"
           [disabled]="this.listaServicios.length > 0">
           <i class="fas fa-plus"></i> Agregar
+        </button>
+        <button type="button" class="btn btn-success" (click)="actualizarServicio()" *ngIf="editandoServicio">
+          <i class="fas fa-edit"></i> Actualizar
         </button>
       </div>
 
@@ -231,7 +234,7 @@
             <th scope="col">Exentas</th>
             <th scope="col">IVA 5%</th>
             <th scope="col">IVA 10%</th>
-            <th scope="col" *ngIf="accion != 'Ver Factura'">Acciones</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -242,9 +245,13 @@
             <td>{{ item.exento | numberFormat }}</td>
             <td>{{ item.iva_5 | numberFormat }}</td>
             <td>{{ item.iva_10 | numberFormat }}</td>
-            <td *ngIf="accion != 'Ver Factura'">
-              <button type="button" class="btn btn-danger btn-sm" (click)="eliminarServicio(i)">
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" (click)="eliminarServicio(i)"
+                *ngIf="accion != 'Ver Factura' && page == 'detalle'">
                 <i class="fas fa-times"></i>
+              </button>
+              <button type="button" class="btn btn-warning btn-sm" (click)="getServicio(i)">
+                <i class="fas fa-edit"></i>
               </button>
             </td>
           </tr>
@@ -268,8 +275,12 @@
           <button type="button" class="btn btn-danger" (click)="mostrarFormulario(false, 'Listado')">
             <i class="fas fa-times"></i> Cancelar</button> &nbsp;
           <button type="button" class="btn btn-success" *ngIf="accion != 'Ver Factura' && page == 'detalle'"
-            (click)="submit()">
+            (click)="registrar()" [disabled]="this.listaServicios.length <= 0 || editandoServicio">
             <i class="fas fa-save"></i> Guardar
+          </button> &nbsp;
+          <button type="button" class="btn btn-success" *ngIf="accion == 'Ver Factura' && page == 'detalle'"
+            (click)="actualizar()" [disabled]="editandoServicio">
+            <i class="fas fa-save"></i> Actualizar
           </button> &nbsp;
 
 

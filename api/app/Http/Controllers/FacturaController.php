@@ -168,41 +168,62 @@ class FacturaController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        // $id_cliente = $request->input("id_cliente");
-        // $fecha_emision = $request->input("fecha_emision");
-        // $numero = $request->input("numero");
-        // $tipo = $request->input("tipo");
+        $id_cliente = $request->input("id_cliente");
+        $fecha_emision = $request->input("fecha_emision");
+        $numero = $request->input("numero");
+        $tipo = $request->input("tipo");
+        $total = $request->input("total");
+        $exento = $request->input("exento");
+        $iva_5 = $request->input("iva_5");
+        $iva_10 = $request->input("iva_10");
+        $detalles = $request->input("detalles");
 
-        // $validator = Validator::make($request->all(), [
-        //     'id_cliente'  => 'required',
-        //     'fecha_emision'  => 'required',
-        //     'numero'  => 'required',
-        //     'tipo'  => 'required'
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'id_cliente'  => 'required',
+            'fecha_emision'  => 'required',
+            'numero'  => 'required',
+            'tipo'  => 'required'
+        ]);
 
-        // if ($validator->fails()) {
-        //     return $this->sendResponse(false, 'Error de validacion', $validator->errors(), 400);
-        // }
+        if ($validator->fails()) {
+            return $this->sendResponse(false, 'Error de validacion', $validator->errors(), 400);
+        }
 
 
-        // if ($validator->fails()) {
-        //     return $this->sendResponse(false, 'Error de validacion', $validator->errors(), 400);
-        // }
+        $factura = Factura::find($id);
+        if ($factura) {
+            $factura->id_cliente = $id_cliente;
+            $factura->tipo = $tipo;
+            $factura->total = $total;
+            $factura->exento = $exento;
+            $factura->iva_5 = $iva_5;
+            $factura->iva_10 = $iva_10;
 
-        // $factura = Cliente::find($id);
-        // if ($factura) {
-        //     $factura->id_cliente = $id_cliente;
-        //     $factura->fecha_emision = $fecha_emision;
-        //     $factura->numero = $numero;
-        //     $factura->tipo = $tipo;
-        //     if ($factura->save()) {
-        //         return $this->sendResponse(true, 'Factura actualizada', $factura, 200);
-        //     }
+            if ($factura->save()) {
+                $facturaDetalle = FacturaDetalle::where([['id_factura', '=', $factura->id]])->first();
+                if (!$facturaDetalle) return $this->sendResponse(false, 'No se encontro detalle de la Factura', null, 404);
+
+                foreach ($detalles as $detalle) {
+                    $facturaDetalle->cantidad = $detalle['cantidad'];
+                    $facturaDetalle->descripcion = $detalle['descripcion'];
+                    $facturaDetalle->precio_unitario = $detalle['precio_unitario'];
+                    $facturaDetalle->exento = $detalle['exento'];
+                    $facturaDetalle->iva_5 = $detalle['iva_5'];
+                    $facturaDetalle->iva_10 = $detalle['iva_10'];
+
+                    if (!$facturaDetalle->save()) {
+                        return $this->sendResponse(true, 'Detalle de factura no actualizada', $facturaDetalle, 400);
+                        break;
+                    }
+                }
+
+                return $this->sendResponse(true, 'Factura actualizada', $factura, 200);
+            }
             
-        //     return $this->sendResponse(false, 'Factura no actualizada', null, 400);
-        // }
+            return $this->sendResponse(false, 'Factura no actualizada', null, 400);
+        }
         
-        // return $this->sendResponse(false, 'No se encontro la Factura', null, 404);
+        return $this->sendResponse(false, 'No se encontro la Factura', null, 404);
     }
 
     /**

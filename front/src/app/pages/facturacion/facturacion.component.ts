@@ -43,6 +43,9 @@ export class FacturacionComponent implements OnInit {
   public filtrosTabla: any = {};
   public parametrosTabla: any = []
 
+  public editandoServicio: boolean = false;
+  public indexEditandoServicio: number = 0;
+
 
   constructor(
     private facturaService: FacturaService,
@@ -179,7 +182,7 @@ export class FacturacionComponent implements OnInit {
 
   }
 
-  async submit() {
+  async registrar() {
     this.goFrmRegFactura = true;
 
     this.factura.fecha_emision = moment(this.factura.fecha_emision).format('YYYY-MM-DD');
@@ -219,7 +222,39 @@ export class FacturacionComponent implements OnInit {
 
   }
 
+  async actualizar() {
+    this.goFrmRegFactura = true;
+
+    this.factura.fecha_emision = moment(this.factura.fecha_emision).format('YYYY-MM-DD');
+    this.factura.detalles = this.listaServicios;
+
+    const response: any = await this.facturaService.actualizar(this.factura, this.factura.id);
+    console.log(response)
+    if (response.success) {
+      this.mensajeOperacion = 'success';
+
+      this.editandoServicio = false;
+      this.indexEditandoServicio = 0;
+
+      setTimeout(() => {
+        this.generarPdf(response.data.id);
+      }, 1500);
+
+      this.goFrmRegFactura = false;
+
+      setTimeout(() => {
+        this.mostrarFormulario(false, "Listado");
+      }, 2000);
+
+    } else {
+      this.mensajeOperacion = 'error';
+    }
+
+  }
+
   async getFactura(id_factura) {
+    this.inicilizarDetalleFactura();
+
     const response: any = await this.facturaService.get(id_factura);
 
     if (response.success) {
@@ -247,6 +282,8 @@ export class FacturacionComponent implements OnInit {
     const response: any = await this.facturaService.getDetalle(id_factura);
 
     if (response.success) {
+
+      console.log(response.data)
       this.listaServicios = [];
       this.listaServicios = response.data;
       this.factura.detalles = response.data;
@@ -410,7 +447,69 @@ export class FacturacionComponent implements OnInit {
     } else {
 
     }
+  }
+
+  async getServicio(index) {
+    this.editandoServicio = true;
+    this.indexEditandoServicio = index;
+
+    if (this.listaServicios[index]['exento'] != 0) this.listaServicios[index]['impuesto'] = 0;
+    if (this.listaServicios[index]['iva_5'] != 0) this.listaServicios[index]['impuesto'] = 5;
+    if (this.listaServicios[index]['iva_10'] != 0) this.listaServicios[index]['impuesto'] = 10;
+    this.detalleFactura = this.listaServicios[index];
+  }
+
+  async actualizarServicio() {
+    this.inicilizarDetalleTotal();
+    let index = this.indexEditandoServicio;
+
+    if (!this.detalleFactura.cantidad || !this.detalleFactura.descripcion || !this.detalleFactura.precio_unitario
+      || !this.detalleFactura.impuesto) {
+      this.goFrmServicio = true;
+      return;
+    }
+
+    this.detalleTotal.total += this.detalleFactura.precio_unitario * this.detalleFactura.cantidad;
+
+    if (this.detalleFactura.impuesto == 0) {
+      this.detalleTotal.exento += this.detalleFactura.precio_unitario;
+      this.detalleFactura.exento = this.detalleFactura.precio_unitario;
+      this.detalleFactura.iva_5 = 0;
+      this.detalleFactura.iva_10 = 0;
+    }
+    if (this.detalleFactura.impuesto == 5) {
+      this.detalleTotal.iva_5 += this.detalleFactura.precio_unitario;
+      this.detalleFactura.exento = 0;
+      this.detalleFactura.iva_5 = this.detalleFactura.precio_unitario;
+      this.detalleFactura.iva_10 = 0;
+    }
+    if (this.detalleFactura.impuesto == 10) {
+      this.detalleTotal.iva_10 += this.detalleFactura.precio_unitario;
+      this.detalleFactura.exento = 0;
+      this.detalleFactura.iva_5 = 0;
+      this.detalleFactura.iva_10 = this.detalleFactura.precio_unitario;
+    }
+
+    //cargamos los totales por cada servicio insertado
+    this.factura.total = this.detalleTotal.total;
+    this.factura.exento = this.detalleTotal.exento;
+    this.factura.iva_5 = this.detalleTotal.iva_5;
+    this.factura.iva_10 = this.detalleTotal.iva_10;
+
+    //se elimina el servicio 
+    this.listaServicios.splice(index, 1);
+
+    //se agrega el nuevo servicio
+    this.listaServicios.push(this.detalleFactura);
+
+
+    this.inicilizarDetalleFactura();
+
+    this.goFrmServicio = false;
+    this.editandoServicio = false;
+    this.indexEditandoServicio = 0;
 
   }
+
 
 }
