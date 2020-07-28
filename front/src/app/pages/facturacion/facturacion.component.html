@@ -34,7 +34,10 @@
       </thead>
       <tbody>
         <tr>
-          <td></td>
+          <td>
+            <input type="date" class="form-control" name="fecha_emision" placeholder="Fecha Emision"
+              [(ngModel)]="filtrosTabla.fecha_emision" (change)="filtrarTabla($event)">
+          </td>
           <td>
             <input type="text" name="numero" class="form-control" placeholder="Numero" [(ngModel)]="filtrosTabla.numero"
               (keyup.enter)="filtrarTabla($event)">
@@ -47,11 +50,12 @@
             </select>
           </td>
           <td>
-            <select name="id_cliente" class="form-control" [(ngModel)]="filtrosTabla.id_cliente" (change)="filtrarTabla($event)">
+            <select name="id_cliente" class="form-control" [(ngModel)]="filtrosTabla.id_cliente"
+              (change)="filtrarTabla($event)">
               <option value="null">-- SELECCIONAR --</option>
               <option *ngFor="let cliente of listaClientes" value="{{cliente.id}}"> {{cliente.razon_social}}
               </option>
-          </select>
+            </select>
           </td>
           <td>
             <input type="text" name="total" class="form-control" placeholder="Total" [(ngModel)]="filtrosTabla.total"
@@ -64,11 +68,14 @@
         </tr>
         <tr
           *ngFor="let fila of listaFactura | paginate: { itemsPerPage: porPagina, currentPage: paginaActual, totalItems: total }">
-          <td>{{ fila.fecha_emision }}</td>
+          <td>{{ fila.fecha_emision | date: 'dd/MM/yyyy' }}</td>
           <td>{{ fila.numero }}</td>
-          <td>{{ fila.tipo }}</td>
+          <td>
+            <div *ngIf="fila.tipo == 'CO'">CONTADO</div>
+            <div *ngIf="fila.tipo == 'CR'">CREDITO</div>
+          </td>
           <td>{{ fila.cliente.razon_social }}</td>
-          <td>{{ fila.total }}</td>
+          <td>{{ fila.total | numberFormat }}</td>
           <td>
             <button class="btn btn-warning btn-sm" (click)="getFactura(fila.id)"> <i class="fas fa-eye"></i> </button> |
             <button type="button" class="btn btn-default border" (click)="generarPdf(fila.id)">
@@ -99,22 +106,18 @@
 
       <h3>Datos de Factura</h3>
       <div class="row">
+        <input type="hidden" name="id" [(ngModel)]="factura.id">
+        <input type="hidden" name="id_timbrado" [(ngModel)]="factura.id_timbrado">
 
-        <div class="form-group col-md-6" [hidden]="true">
+        <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Timbrado" name="id_timbrado" [(ngModel)]="factura.id_timbrado">
+            <input matInput placeholder="Timbrado" name="timbrado" [(ngModel)]="factura.timbrado" disabled>
           </mat-form-field>
         </div>
 
         <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Timbrado" name="timbrado" [(ngModel)]="factura.timbrado">
-          </mat-form-field>
-        </div>
-
-        <div class="form-group col-md-6">
-          <mat-form-field class="example-full-width">
-            <input matInput placeholder="Numero" name="numero" [(ngModel)]="factura.numero">
+            <input matInput placeholder="Numero" name="numero" [(ngModel)]="factura.numero" disabled>
           </mat-form-field>
         </div>
 
@@ -136,7 +139,6 @@
           </mat-form-field>
         </div>
 
-        <input type="hidden" name="id" [(ngModel)]="factura.id">
         <div class="form-group col-md-4">
           <mat-form-field class="example-full-width">
             <input matInput placeholder="R.U.C" name="ruc" [(ngModel)]="factura.ruc" #ruc
@@ -144,15 +146,15 @@
           </mat-form-field>
         </div>
 
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Razon Social" name="razon_social" [(ngModel)]="factura.razon_social">
+            <input matInput placeholder="Razon Social" name="razon_social" [(ngModel)]="factura.razon_social" disabled>
           </mat-form-field>
         </div>
 
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <mat-form-field class="example-full-width">
-            <input matInput placeholder="Direccion" name="direccion" [(ngModel)]="factura.direccion">
+            <input matInput placeholder="Direccion" name="direccion" [(ngModel)]="factura.direccion" disabled>
           </mat-form-field>
         </div>
         <input type="hidden" name="total" [(ngModel)]="factura.total">
@@ -214,7 +216,8 @@
       </div>
 
       <div class="form-group col-md-1" *ngIf="accion != 'Ver Factura'">
-        <button *ngIf="accion != 'Ver Factura'" type="button" class="btn btn-success" (click)="agregarServicio()" [disabled]="this.listaServicios.length > 0">
+        <button *ngIf="accion != 'Ver Factura'" type="button" class="btn btn-success" (click)="agregarServicio()"
+          [disabled]="this.listaServicios.length > 0">
           <i class="fas fa-plus"></i> Agregar
         </button>
       </div>
@@ -233,12 +236,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of listaServicios; let i = index">
-            <td>{{ item.cantidad }}</td>
+            <td>{{ item.cantidad | numberFormat }}</td>
             <td>{{ item.descripcion }}</td>
-            <td>{{ item.precio_unitario }}</td>
-            <td>{{ item.exento }}</td>
-            <td>{{ item.iva_5 }}</td>
-            <td>{{ item.iva_10 }}</td>
+            <td>{{ item.precio_unitario | numberFormat }}</td>
+            <td>{{ item.exento | numberFormat }}</td>
+            <td>{{ item.iva_5 | numberFormat }}</td>
+            <td>{{ item.iva_10 | numberFormat }}</td>
             <td *ngIf="accion != 'Ver Factura'">
               <button type="button" class="btn btn-danger btn-sm" (click)="eliminarServicio(i)">
                 <i class="fas fa-times"></i>

@@ -5,6 +5,7 @@ export class Factura {
         public id_timbrado: number,
         public fecha_emision: string,
         public numero: string,
+        public numeroComrpob: number,
         public tipo: string,
         public id_cliente: number,
         public ruc: string,

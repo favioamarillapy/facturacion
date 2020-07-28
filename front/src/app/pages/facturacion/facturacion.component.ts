@@ -6,8 +6,6 @@ import { Timbrado } from 'src/app/models/timbrado';
 import { Factura } from 'src/app/models/factura';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
-import { FormControl } from '@angular/forms';
-import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-facturacion',
@@ -45,14 +43,14 @@ export class FacturacionComponent implements OnInit {
   public filtrosTabla: any = {};
   public parametrosTabla: any = []
 
-  
+
   constructor(
     private facturaService: FacturaService,
     private clienteService: ClienteService,
     private timbradoService: TimbradoService
   ) {
     this.inicializarFiltros();
-    this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.goFrmRegFactura = false;
     this.goFrmServicio = false;
   }
@@ -65,6 +63,7 @@ export class FacturacionComponent implements OnInit {
 
   async inicializarFiltros() {
     this.filtrosTabla = {
+      fecha_emision: '',
       numero: '',
       tipo: null,
       id_cliente: null,
@@ -104,7 +103,7 @@ export class FacturacionComponent implements OnInit {
 
 
     if (flag && accion == 'Registrar') {
-      this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+      this.factura = new Factura(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
       this.page = 'cabecera';
       this.listaServicios = [];
 
@@ -132,6 +131,7 @@ export class FacturacionComponent implements OnInit {
 
         let numero: number;
         (this.timbrado.ult_usado) ? numero = this.timbrado.ult_usado + 1 : numero = this.timbrado.numero_desde;
+        this.factura.numeroComrpob = numero;
         this.factura.numero = '001-001-' + this.setearNroFactura(numero.toString());
 
       }
@@ -192,7 +192,7 @@ export class FacturacionComponent implements OnInit {
       let number = this.timbrado.ult_usado + 1;
       let ult_usado: string = number.toString();
       const dataUlt = {
-        ult_usado: parseInt(ult_usado)
+        ult_usado: this.factura.numeroComrpob
       };
 
       const responseUltUsado: any = await this.timbradoService.updateUltUsado(dataUlt, this.factura.id_timbrado);
@@ -234,7 +234,7 @@ export class FacturacionComponent implements OnInit {
       this.factura.ruc = this.factura.ruc;
       this.factura.razon_social = this.factura.razon_social;
       this.factura.direccion = this.factura.direccion;
-      
+
       await this.getDetalleFactura(id_factura);
       this.page = 'cabecera';
       this.mostrarFormulario(true, 'Ver Factura');
@@ -344,11 +344,16 @@ export class FacturacionComponent implements OnInit {
 
     if (response.success) {
       if (response.data[0]) {
+        this.mensajeError = '';
         this.factura.id_cliente = response.data[0].id;
         this.factura.ruc = response.data[0].ruc;
         this.factura.razon_social = response.data[0].razon_social;
         this.factura.direccion = response.data[0].direccion;
       } else {
+        this.factura.id_cliente = 0;
+        this.factura.ruc = "";
+        this.factura.razon_social = "";
+        this.factura.direccion = "";
         this.mensajeError = 'No se encuentra el cliente';
       }
     } else {
@@ -399,7 +404,7 @@ export class FacturacionComponent implements OnInit {
 
   async getClientes() {
     const response: any = await this.clienteService.get(null, null);
-    
+
     if (response.success) {
       this.listaClientes = response.data;
     } else {
@@ -407,5 +412,5 @@ export class FacturacionComponent implements OnInit {
     }
 
   }
-  
+
 }

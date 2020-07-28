@@ -19,6 +19,7 @@ import { PaginacionComponent } from './common/paginacion/paginacion.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ClienteComponent } from './pages/cliente/cliente.component';
 import { TimbradoComponent } from './pages/timbrado/timbrado.component';
+import { NumberFormatPipe } from './pipes/number-format.pipe';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { TimbradoComponent } from './pages/timbrado/timbrado.component';
     DashboardComponent,
     PaginacionComponent,
     ClienteComponent,
-    TimbradoComponent
+    TimbradoComponent,
+    NumberFormatPipe
   ],
   imports: [
     BrowserModule,
