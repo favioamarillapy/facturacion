@@ -28,25 +28,30 @@
           <th scope="col">Razon Social</th>
           <th scope="col">Telefono</th>
           <th scope="col">Direccion</th>
-          <th scope="col">Acciones</th>
+          <th scope="col" class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
-            <input type="text" name="ruc" class="form-control" placeholder="Ruc" [(ngModel)]="filtrosTabla.ruc" (keyup.enter)="filtrarTabla($event)">
+            <input type="text" name="ruc" class="form-control" placeholder="Ruc" [(ngModel)]="filtrosTabla.ruc"
+              (keyup.enter)="filtrarTabla($event)">
           </td>
           <td>
-            <input type="text" name="razon_social" class="form-control" placeholder="Razon Social" [(ngModel)]="filtrosTabla.razon_social" (keyup.enter)="filtrarTabla($event)">
+            <input type="text" name="razon_social" class="form-control" placeholder="Razon Social"
+              [(ngModel)]="filtrosTabla.razon_social" (keyup.enter)="filtrarTabla($event)">
           </td>
           <td>
-            <input type="text" name="telefono" class="form-control" placeholder="Telefono" [(ngModel)]="filtrosTabla.telefono" (keyup.enter)="filtrarTabla($event)">
+            <input type="text" name="telefono" class="form-control" placeholder="Telefono"
+              [(ngModel)]="filtrosTabla.telefono" (keyup.enter)="filtrarTabla($event)">
           </td>
           <td>
-            <input type="text" name="direccion" class="form-control" placeholder="Direccion" [(ngModel)]="filtrosTabla.direccion" (keyup.enter)="filtrarTabla($event)">
+            <input type="text" name="direccion" class="form-control" placeholder="Direccion"
+              [(ngModel)]="filtrosTabla.direccion" (keyup.enter)="filtrarTabla($event)">
           </td>
-          <td class="text-right">
-            <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i class="fas fa-times"></i></button> &nbsp;
+          <td class="text-center">
+            <button class="btn btn-danger btn-sm" (click)="filtrarTabla(null)"><i class="fas fa-times"></i></button>
+            &nbsp;
           </td>
         </tr>
         <tr
@@ -55,7 +60,7 @@
           <td>{{ fila.razon_social }}</td>
           <td>{{ fila.telefono }}</td>
           <td>{{ fila.direccion }}</td>
-          <td>
+          <td class="text-center">
             <button class="btn btn-warning btn-sm" (click)="getCliente(fila.id)"> <i class="fas fa-edit"></i>
             </button>
           </td>
@@ -85,30 +90,34 @@
 
     <div class="row">
 
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-5">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Ruc" name="ruc" [(ngModel)]="cliente.ruc" autocomplete="off">
         </mat-form-field>
       </div>
+      <div class="col-md-7"></div>
 
-      <div class="form-group  col-md-6">
+      <div class="form-group  col-md-5">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Razon Social" name="razon_social" [(ngModel)]="cliente.razon_social"
             autocomplete="off">
         </mat-form-field>
       </div>
+      <div class="col-md-7"></div>
 
-      <div class="form-group  col-md-6">
+      <div class="form-group  col-md-5">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Direccion" name="direccion" [(ngModel)]="cliente.direccion" autocomplete="off">
         </mat-form-field>
       </div>
+      <div class="col-md-7"></div>
 
-      <div class="form-group  col-md-6">
+      <div class="form-group  col-md-5">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Telefono" name="telefono" [(ngModel)]="cliente.telefono" autocomplete="off">
         </mat-form-field>
       </div>
+      <div class="col-md-7"></div>
 
     </div>
     <br>
