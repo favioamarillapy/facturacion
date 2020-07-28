@@ -8,7 +8,7 @@ import { TimbradoComponent } from './pages/timbrado/timbrado.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'facturacion', component: FacturacionComponent, canActivate: [AuthGuard] },
