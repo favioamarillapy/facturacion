@@ -11,11 +11,28 @@
 <div class="mt-4"></div>
 
 <div class="container">
-  <!-- boton para agregar  -->
-  <div *ngIf="!formulario" class="row justify-content-end">
-    <button class="btn btn-primary" (click)="mostrarFormulario(true, 'Registrar')"><i class="fas fa-plus"></i>
-      Agregar</button>
+
+  <div class="row">
+    <div class="col">
+      <span class="float-left">
+        <!-- mensaje de operacion -->
+        <div class="alert" role="alert" *ngIf="mensajeOperacion != ''"
+          [ngClass]="{'alert-success': mensajeOperacion == 'success' || mensajeOperacion == 'anulada', 'alert-danger': mensajeOperacion == 'error'}">
+          <div *ngIf="mensajeOperacion == 'anulada'">Factura anulada correctamente</div>
+          <div *ngIf="mensajeOperacion == 'success'">Factura generada correctamente</div>
+          <div *ngIf="mensajeOperacion == 'error'">Error de operacion</div>
+        </div>
+      </span>
+      <span class="float-right">
+        <!-- boton para agregar  -->
+        <div *ngIf="!formulario" class="row justify-content-end">
+          <button class="btn btn-primary" (click)="mostrarFormulario(true, 'Registrar')"><i class="fas fa-plus"></i>
+            Agregar</button>
+        </div>
+      </span>
+    </div>
   </div>
+
 
   <div class="mt-2"></div>
 
@@ -29,6 +46,7 @@
           <th scope="col">Condicion</th>
           <th scope="col">Razon Social</th>
           <th scope="col">Total</th>
+          <th scope="col">Estado</th>
           <th scope="col" class="text-center">Acciones</th>
         </tr>
       </thead>
@@ -61,6 +79,14 @@
             <input type="text" name="total" class="form-control" placeholder="Total" [(ngModel)]="filtrosTabla.total"
               (keyup.enter)="filtrarTabla($event)">
           </td>
+          <td>
+            <select name="anulado" class="form-control" [(ngModel)]="filtrosTabla.anulado"
+              (change)="filtrarTabla($event)">
+              <option value="null">-- SELECCIONAR --</option>
+              <option value="N">EMITIDO</option>
+              <option value="S">ANULADO</option>
+            </select>
+          </td>
           <td class="text-center">
             <button class="btn btn-round btn-sm btn-danger" (click)="filtrarTabla(null)"><i
                 class="fas fa-times"></i></button> &nbsp;
@@ -76,11 +102,19 @@
           </td>
           <td>{{ fila.cliente.razon_social }}</td>
           <td>{{ fila.total | numberFormat }}</td>
+          <td>
+            <div *ngIf="fila.anulado == 'S'">ANULADO</div>
+            <div *ngIf="fila.anulado != 'S'">EMITIDO</div>
+          </td>
           <td class="text-center">
-            <button class="btn btn-round btn-sm btn-warning" (click)="getFactura(fila.id)"><i
-                class="fas fa-edit"></i></button>
+            <button *ngIf="fila.anulado != 'S'" class="btn btn-round btn-sm btn-warning"
+              (click)="getFactura(fila.id)"><i class="fas fa-edit"></i></button>
             <button class="btn btn-round btn-sm btn-default border" (click)="generarPdf(fila.id)"><i
                 class="fas fa-print"></i></button>
+            <button *ngIf="fila.anulado != 'S'" type="button" class="btn btn-round btn-sm btn-danger"
+              data-toggle="modal" data-target="#modalEstado" (click)="setFacturaEstado(fila.id)">
+              <i class="fas fa-times"></i>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -93,13 +127,29 @@
       [total]="total"></app-paginacion>
   </div>
 
-  <div *ngIf="formulario">
-    <!-- mensaje de operacion -->
-    <div class="alert" role="alert" *ngIf="mensajeOperacion != ''"
-      [ngClass]="{'alert-success': mensajeOperacion == 'success', 'alert-danger': mensajeOperacion == 'error'}">
-      <div *ngIf="mensajeOperacion == 'success'">Factura generada correctamente</div>
-      <div *ngIf="mensajeOperacion == 'error'">Error al generar factura</div>
+  <div class="modal fade" id="modalEstado" tabindex="-1" role="dialog" aria-labelledby="modalEstado" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEstado">¿Deseas anular la factura?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Cliente: </strong> {{ factura.cliente.razon_social }}</p>
+          <p><strong>Numero: </strong> {{ factura.numero }}</p>
+          <p><strong>Total: </strong> {{ factura.total | numberFormat }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="anular()">Anular</button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div *ngIf="formulario">
 
     <!-- cabecera de factura -->
     <form *ngIf="page == 'cabecera'" class="form-group" novalidate>

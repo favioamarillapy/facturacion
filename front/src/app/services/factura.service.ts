@@ -79,4 +79,20 @@ export class FacturaService {
     });
   }
 
+  
+  async anular(id) {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    return new Promise(resolve => {
+      this.http.delete(`${API}/factura/${id}`, { headers: headers }).subscribe(
+        (response: any) => {
+          resolve(response);
+        },
+        error => {
+          resolve(error.error);
+        }
+      );
+    });
+  }
+
 }

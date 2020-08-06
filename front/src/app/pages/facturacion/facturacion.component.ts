@@ -70,7 +70,8 @@ export class FacturacionComponent implements OnInit {
       numero: '',
       tipo: null,
       id_cliente: null,
-      total: ''
+      total: '',
+      anulado: null
     }
   }
 
@@ -229,7 +230,7 @@ export class FacturacionComponent implements OnInit {
     this.factura.detalles = this.listaServicios;
 
     const response: any = await this.facturaService.actualizar(this.factura, this.factura.id);
-    console.log(response)
+
     if (response.success) {
       this.mensajeOperacion = 'success';
 
@@ -252,7 +253,7 @@ export class FacturacionComponent implements OnInit {
 
   }
 
-  async getFactura(id_factura) {
+  async getFactura(id_factura, anular = false) {
     this.inicilizarDetalleFactura();
 
     const response: any = await this.facturaService.get(id_factura);
@@ -260,19 +261,22 @@ export class FacturacionComponent implements OnInit {
     if (response.success) {
       this.factura = response.data;
 
-      await this.getTimbradoById(this.factura.id_timbrado);
-      await this.getCliente(response.data.cliente.ruc);
-      let event = {
-        value: this.factura.id_cliente
+      if (!anular) {
+        await this.getTimbradoById(this.factura.id_timbrado);
+        await this.getCliente(response.data.cliente.ruc);
+        let event = {
+          value: this.factura.id_cliente
+        }
+
+        this.factura.ruc = this.factura.ruc;
+        this.factura.razon_social = this.factura.razon_social;
+        this.factura.direccion = this.factura.direccion;
+
+        await this.getDetalleFactura(id_factura);
+        this.page = 'cabecera';
+        this.mostrarFormulario(true, 'Ver Factura');
+
       }
-
-      this.factura.ruc = this.factura.ruc;
-      this.factura.razon_social = this.factura.razon_social;
-      this.factura.direccion = this.factura.direccion;
-
-      await this.getDetalleFactura(id_factura);
-      this.page = 'cabecera';
-      this.mostrarFormulario(true, 'Ver Factura');
     } else {
 
     }
@@ -509,6 +513,27 @@ export class FacturacionComponent implements OnInit {
     this.editandoServicio = false;
     this.indexEditandoServicio = 0;
 
+  }
+
+  setFacturaEstado(factura) {
+    this.getFactura(factura, true);
+  }
+
+  async anular() {
+    const response: any = await this.facturaService.anular(this.factura.id);
+
+    if (response) {
+      if (response.success) {
+        this.mensajeOperacion = 'anulada';
+        this.paginacion();
+
+        setTimeout(() => {
+          this.mensajeOperacion = '';
+        }, 1500);
+      } else {
+        this.mensajeOperacion = 'error';
+      }
+    }
   }
 
 

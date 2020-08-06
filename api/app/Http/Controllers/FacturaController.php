@@ -41,7 +41,14 @@ class FacturaController extends BaseController
 
         $total = $request->query('total');
         if ($total) {
-            $query->where('total', 'LIKE', '%'.$total.'%');
+            $query->where('total', '=', $total);
+        }
+
+        $anulado = $request->query('anulado');
+        if ($anulado) {
+            if ($anulado == 'S') $query->where('anulado', '=', 'S');
+            if ($anulado != 'S') $query->where('anulado', '<>', 'S');
+            
         }
 
         $paginar = $request->query('paginar');
@@ -234,6 +241,19 @@ class FacturaController extends BaseController
      */
     public function destroy($id)
     {
+        $factura = Factura::find($id);
+
+        if ($factura) {
+            $factura->anulado = ($factura->anulado == 'S') ? 'N' : 'S';
+            
+            if ($factura->update()) {
+                return $this->sendResponse(true, 'Factura actualizada', $factura, 200);
+            }
+            
+            return $this->sendResponse(false, 'Factura no actualizada', $factura, 400);
+        }
+        
+        return $this->sendResponse(true, 'No se encontro la factura', $factura, 404);
     }
 
     public function detalle($id)
@@ -271,4 +291,6 @@ class FacturaController extends BaseController
 
         return $this->sendResponse(false, 'No se encontro la factura', null, 404);
     }
+
+    
 }
