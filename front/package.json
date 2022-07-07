@@ -29,7 +29,7 @@
     "html2canvas": "^1.0.0-rc.5",
     "jquery": "3.4.1",
     "jspdf": "^1.5.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "ngx-pagination": "^5.0.0",
     "pdfmake": "^0.1.65",
     "rxjs": "~6.3.3",
